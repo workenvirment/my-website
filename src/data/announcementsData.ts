@@ -4,11 +4,11 @@ export const PLATFORM_ANNOUNCEMENTS: AnnouncementItem[] = [
   {
     id: 'ann-001',
     title: 'Severe Weather Advisory: I-70 Rocky Mountain Pass Chain Law Active',
-    message: 'Colorado Department of Transportation (CDOT) has enacted passenger and commercial vehicle Chain Laws on I-70 between Silverthorne (MM 205) and Vail Pass (MM 190). All DGW carriers dispatched west of Denver (HQ 9057 E 50th Ave) must confirm tire chains and minimum 4/32 inch tread depth.',
+    message: 'Colorado Department of Transportation (CDOT) has enacted passenger and commercial vehicle Chain Laws on I-70 between Silverthorne (MM 205) and Vail Pass (MM 190). All DGW carriers dispatched west of Denver corridors must confirm tire chains and minimum 4/32 inch tread depth.',
     priority: 'urgent',
     category: 'Weather & Road Advisory',
     createdAt: '2026-09-06 08:30 AM',
-    author: 'DGW Safety & Compliance Lead (Saad Altaf)',
+    author: 'DGW Safety & Compliance Desk',
     targetRole: 'all',
     active: true
   },

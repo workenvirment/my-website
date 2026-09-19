@@ -246,7 +246,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
                 <p className="font-bold text-slate-900">{slot.truckId} • {slot.carrierName}</p>
                 <p className="text-slate-500 text-[11px]">{slot.origin} → {slot.destination}</p>
-                <p className="text-[10px] text-slate-400 font-mono italic">✓ {slot.milestone}</p>
+                <p className="text-[10px] text-slate-400 font-mono italic">{slot.milestone}</p>
               </div>
             ))}
           </div>

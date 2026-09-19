@@ -7,7 +7,8 @@ import {
   ShieldCheck, 
   Sparkles,
   Calendar,
-  Layers
+  Layers,
+  CheckCircle2
 } from 'lucide-react';
 
 interface LogiXpressHeroProps {
@@ -47,7 +48,7 @@ export const LogiXpressHero: React.FC<LogiXpressHeroProps> = ({
       <div className="absolute inset-0 z-0">
         <img
           src={currentHero.bg}
-          alt="DGW Logistics Hero"
+          alt="DGW Solutions LLC Commercial Semi-Truck at Sunset"
           className="w-full h-full object-cover object-center transition-all duration-700 scale-105"
         />
         {/* Deep Atmospheric Gradients */}
@@ -62,10 +63,10 @@ export const LogiXpressHero: React.FC<LogiXpressHeroProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
           
           {/* Tagline / Eyebrow */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-orange/20 border border-brand-orange/40 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-orange/20 border border-brand-orange/40 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-brand-orange animate-ping" />
             <span className="font-mono text-[11px] font-bold text-white tracking-widest uppercase">
-              DGW SOLUTIONS LLC • DISPATCHERS GLOBAL WORLD
+              DGW SOLUTIONS LLC • DISPATCHING GLOBAL WORLD
             </span>
           </div>
 
@@ -242,11 +243,11 @@ export const LogiXpressHero: React.FC<LogiXpressHeroProps> = ({
               {/* 2 Quick Pledges */}
               <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] text-slate-300">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-brand-orange">✓</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-brand-orange" />
                   <span>Zero Forced Dispatch</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-brand-orange">✓</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-brand-orange" />
                   <span>100% Final Approval</span>
                 </div>
               </div>

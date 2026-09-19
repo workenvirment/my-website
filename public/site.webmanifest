@@ -1,0 +1,16 @@
+{
+  "name": "DGW Solutions LLC | Dispatching Global World",
+  "short_name": "DGW Solutions",
+  "description": "Professional logistics and truck dispatching support for carriers and owner-operators.",
+  "start_url": "/",
+  "display": "minimal-ui",
+  "background_color": "#0B1727",
+  "theme_color": "#F8FAFC",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

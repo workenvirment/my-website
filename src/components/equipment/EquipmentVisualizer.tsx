@@ -256,7 +256,7 @@ export const EquipmentVisualizer: React.FC<EquipmentVisualizerProps> = ({ onSele
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
             <div className="relative z-10 p-4 text-white">
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-black uppercase mb-1 inline-block">
-                📸 Real Fleet Photography
+                Commercial Fleet Profile
               </span>
               <h4 className="font-display font-black text-lg text-white leading-tight">
                 {selectedEquipment.name}
@@ -268,7 +268,7 @@ export const EquipmentVisualizer: React.FC<EquipmentVisualizerProps> = ({ onSele
           {/* 2.5D Technical Diagram Card */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col items-center justify-center overflow-hidden relative">
             <div className="w-full flex items-center justify-between font-mono text-[10px] text-slate-500 uppercase tracking-widest mb-1">
-              <span>📐 2.5D Technical Blueprint</span>
+              <span>Technical Blueprint Specifications</span>
               <span className="font-bold text-amber-700">{selectedEquipment.length}</span>
             </div>
             <div className="w-full max-w-md py-2">

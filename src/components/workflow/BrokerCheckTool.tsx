@@ -107,7 +107,7 @@ export const BrokerCheckTool: React.FC = () => {
                   </div>
                   <p className="text-slate-600 leading-relaxed text-[11px]">{item.description}</p>
                   <p className="text-brand-orange text-[10px] font-mono font-semibold mt-1">
-                    ✓ Verified via: {item.checkPoint}
+                    Verified via: {item.checkPoint}
                   </p>
                 </div>
               </button>

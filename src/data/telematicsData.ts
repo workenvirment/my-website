@@ -116,7 +116,7 @@ export const TELEMETRY_FLEET_DATA: TelemetryTruck[] = [
       speedMph: 0
     },
     origin: {
-      city: 'Denver (9057 E 50th Ave)',
+      city: 'Denver',
       state: 'CO'
     },
     destination: {

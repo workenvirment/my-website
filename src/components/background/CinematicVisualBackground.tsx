@@ -24,7 +24,7 @@ const TRUCK_PHOTO_GALLERY: PhotoSlide[] = [
     imageUrl: '/images/fleet_sunset_row.jpg',
     altText: 'Class 8 semi-truck fleet staged in a neat row at trucking terminal at golden hour sunset',
     accentColor: '#F59E0B',
-    location: 'Official Commercial Fleet Yard • Denver HQ Network'
+    location: 'Commercial Fleet Operations Network'
   },
   {
     id: 'night-highway-truck',
@@ -32,7 +32,7 @@ const TRUCK_PHOTO_GALLERY: PhotoSlide[] = [
     imageUrl: '/images/night_highway_truck.jpg',
     altText: 'Modern Class 8 semi-truck sleeper rig driving on open mountain highway under starry night sky',
     accentColor: '#38BDF8',
-    location: 'I-70 Transcontinental Corridor • Continuous 24/7 Operations'
+    location: 'I-70 Transcontinental Corridor • Continuous Operations'
   },
   {
     id: 'tanker-refinery',
@@ -48,7 +48,7 @@ const TRUCK_PHOTO_GALLERY: PhotoSlide[] = [
     imageUrl: '/images/cargo_warehouse_hub.jpg',
     altText: 'Modern commercial distribution logistics center with staged freight',
     accentColor: '#10B981',
-    location: 'Denver Headquarters Distribution Hub • 9057 E 50th Ave'
+    location: 'Commercial Distribution Hub Network'
   }
 ];
 

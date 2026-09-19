@@ -33,10 +33,10 @@ export const LogisticsAiAssistant: React.FC = () => {
   ]);
 
   const quickPrompts = [
-    { label: '🔍 Vet MC-984210 Safety', query: 'Inspect FMCSA safety and BIPD insurance for MC-984210' },
-    { label: '💰 Deadhead Margin: Dallas ➔ Atlanta', query: 'Calculate true RPM for 780 miles from Dallas to Atlanta with 45 deadhead miles' },
-    { label: '📈 Southeast Reefer Rate Trends', query: 'What is the current spot market rate for 53ft Reefer outbound Georgia port lanes?' },
-    { label: '📄 Required Setup Packet Checklist', query: 'What documents are required for instant broker packet onboarding?' }
+    { label: 'Vet MC-984210 Safety', query: 'Inspect FMCSA safety and BIPD insurance for MC-984210' },
+    { label: 'Deadhead Margin: Dallas to Atlanta', query: 'Calculate true RPM for 780 miles from Dallas to Atlanta with 45 deadhead miles' },
+    { label: 'Southeast Reefer Rate Trends', query: 'What is the current spot market rate for 53ft Reefer outbound Georgia port lanes?' },
+    { label: 'Required Setup Packet Checklist', query: 'What documents are required for instant broker packet onboarding?' }
   ];
 
   const handleSendQuery = (queryText: string) => {
@@ -59,15 +59,15 @@ export const LogisticsAiAssistant: React.FC = () => {
       const q = queryText.toLowerCase();
 
       if (q.includes('984210') || q.includes('vance')) {
-        reply = '✅ MC-984210 (Vance Freight Logistics LLC) is ACTIVE & AUTHORIZED by FMCSA with Gold Tier rating. Operating 14 power units with $1,000,000 Auto Liability on file with Great West Casualty and $250,000 Cargo. Zero DOT recordable crashes in 24 months.';
+        reply = 'MC-984210 (Vance Freight Logistics LLC) is ACTIVE & AUTHORIZED by FMCSA with Gold Tier rating. Operating 14 power units with $1,000,000 Auto Liability on file with Great West Casualty and $250,000 Cargo. Zero DOT recordable crashes in 24 months.';
       } else if (q.includes('margin') || q.includes('dallas') || q.includes('deadhead')) {
-        reply = '📊 Trip Calculation: Dallas ➔ Atlanta (780 loaded + 45 deadhead = 825 total miles). At $2,400 gross offer, True RPM is $2.91/mile. Estimated fuel burn at $3.65/gal is ~$261, leaving an estimated net earnings pocket of $2,139.';
+        reply = 'Trip Calculation: Dallas to Atlanta (780 loaded + 45 deadhead = 825 total miles). At $2,400 gross offer, True RPM is $2.91/mile. Estimated fuel burn at $3.65/gal is ~$261, leaving an estimated net earnings pocket of $2,139.';
       } else if (q.includes('reefer') || q.includes('rate') || q.includes('southeast')) {
-        reply = '📈 Current Outbound Southeast Reefer Index is surging at $3.22/mile (+$0.38 vs 30-day baseline) due to fresh harvest and Savannah port import volume. Preferred destination corridors: Midwest (IL/IN) and Texas.';
+        reply = 'Current Outbound Southeast Reefer Index is surging at $3.22/mile (+$0.38 vs 30-day baseline) due to fresh harvest and Savannah port import volume. Preferred destination corridors: Midwest (IL/IN) and Texas.';
       } else if (q.includes('document') || q.includes('packet') || q.includes('checklist')) {
-        reply = '📋 DGW Carrier Packet requires 4 key files: 1) Active Certificate of Insurance ($1M Auto, $250k Cargo), 2) Signed Form W-9 with EIN (42-4868007), 3) FMCSA Operating Authority Certificate, and 4) Factoring Notice of Assignment (NOA).';
+        reply = 'DGW Carrier Packet requires 4 key files: 1) Active Certificate of Insurance ($1M Auto, $100k+ Cargo), 2) Signed Form W-9, 3) FMCSA Operating Authority Certificate, and 4) Factoring Notice of Assignment (NOA).';
       } else {
-        reply = `I have analyzed your request regarding "${queryText}". DGW Dispatch Intelligence confirms all active telematics and FMCSA safety verification services are operating at peak 99.98% reliability.`;
+        reply = `I have analyzed your request regarding "${queryText}". DGW Dispatch Intelligence confirms all active telematics and carrier safety verification services are operating normally.`;
       }
 
       const aiMsg: ChatMessage = {
@@ -115,7 +115,7 @@ export const LogisticsAiAssistant: React.FC = () => {
                   </span>
                 </h4>
                 <p className="text-[10px] text-slate-400 font-mono">
-                  FMCSA Intelligence • RPM Estimator • Denver HQ
+                  FMCSA Intelligence • Rate Guidance • Dispatch Operations
                 </p>
               </div>
             </div>

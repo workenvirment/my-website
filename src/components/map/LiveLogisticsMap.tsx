@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { 
   Radio, 
   Thermometer, 
-  Phone, 
   ArrowRight,
-  Activity
+  Activity,
+  MessageSquare
 } from 'lucide-react';
 import { US_STATES_GEO, type USStateGeo } from '../../data/usStateGeoData';
 import { TELEMETRY_FLEET_DATA } from '../../data/telematicsData';
@@ -19,7 +19,7 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
   onSelectTruck, 
   onSelectState 
 }) => {
-  const [selectedTruckId, setSelectedTruckId] = useState<string | null>('trk-104'); // Denver HQ by default
+  const [selectedTruckId, setSelectedTruckId] = useState<string | null>('trk-104'); // Active truck by default
   const [selectedStateId, setSelectedStateId] = useState<string>('CO');
   const [hoveredStateId, setHoveredStateId] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -45,15 +45,40 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
   const getStatusBadge = (status: TelematicsStatus) => {
     switch (status) {
       case 'available':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/40 font-bold">🟢 AVAILABLE</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/40 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            AVAILABLE
+          </span>
+        );
       case 'in-transit':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950 text-cyan-400 border border-cyan-500/40 font-bold">🔵 IN TRANSIT</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950 text-cyan-400 border border-cyan-500/40 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+            IN TRANSIT
+          </span>
+        );
       case 'loading':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-500/40 font-bold">🟡 LOADING / STAGED</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-500/40 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            LOADING / STAGED
+          </span>
+        );
       case 'delayed':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-orange-950 text-orange-400 border border-orange-500/40 font-bold">🟠 DELAY REPORTED</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded bg-orange-950 text-orange-400 border border-orange-500/40 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400" />
+            DELAY REPORTED
+          </span>
+        );
       case 'issue-reported':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-500/40 font-bold">🔴 SAFETY HOLD</span>;
+        return (
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-mono px-2 py-0.5 rounded bg-red-950 text-red-400 border border-red-500/40 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+            SAFETY HOLD
+          </span>
+        );
     }
   };
 
@@ -107,7 +132,7 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
       {/* Mobile State Quick-Selector Bar */}
       <div className="block lg:hidden bg-slate-950 p-3 rounded-2xl border border-white/10 space-y-2">
         <div className="flex items-center justify-between text-[11px] font-mono">
-          <span className="text-amber-400 font-bold">📱 Quick State Telematics:</span>
+          <span className="text-amber-400 font-bold">Quick State Telematics:</span>
           <select 
             value={selectedStateId} 
             onChange={(e) => {
@@ -144,7 +169,7 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
                     : 'bg-slate-900 text-slate-300 border border-white/10'
                 }`}
               >
-                {stId} {stId === 'CO' ? '⭐ HQ' : ''}
+                {stId} {stId === 'CO' ? 'Hub' : ''}
               </button>
             );
           })}
@@ -161,7 +186,7 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
           <div className="absolute inset-0 z-0">
             <img 
               src="/images/us_satellite_map.jpg" 
-              alt="Real high-resolution satellite terrain photograph of United States freight network" 
+              alt="High-resolution satellite terrain map of United States freight network" 
               className="w-full h-full object-cover object-center filter brightness-110 contrast-115"
             />
             {/* Subtle High-Tech Vignette & Radar Grid Overlay */}
@@ -180,12 +205,12 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
           <div className="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/90 backdrop-blur-md border border-amber-500/40 text-[10px] font-mono font-bold text-amber-400 shadow-lg pointer-events-auto">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>🛰️ REAL SATELLITE RADAR • 48 CONTIGUOUS STATES</span>
+              <span>SATELLITE RADAR • 48 CONTIGUOUS STATES</span>
             </div>
 
             <div className="flex items-center gap-1 bg-slate-950/85 backdrop-blur-md px-2 py-1 rounded-xl border border-white/15 text-[10px] font-mono text-slate-300 pointer-events-auto">
-              <span className="text-amber-400 font-bold">HQ:</span>
-              <span>Denver, CO (I-70 / I-25 Hub)</span>
+              <span className="text-amber-400 font-bold">Network:</span>
+              <span>Continental US Corridors</span>
             </div>
           </div>
 
@@ -212,7 +237,7 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
               <g opacity="0.65" strokeDasharray="6 4" strokeWidth="2" className="pointer-events-none">
                 {/* I-80 Transcontinental: SF/Sacramento to NY/NJ */}
                 <line x1="85" y1="260" x2="840" y2="210" stroke="#F59E0B" strokeWidth="2.5" />
-                {/* I-70 Central: Utah to Maryland via Denver HQ */}
+                {/* I-70 Central: Utah to Maryland */}
                 <line x1="240" y1="280" x2="790" y2="270" stroke="#FF5722" strokeWidth="2.5" />
                 {/* I-10 Southern: LA to Jacksonville */}
                 <line x1="120" y1="410" x2="780" y2="480" stroke="#38BDF8" strokeWidth="2.5" />
@@ -283,13 +308,13 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
                 })}
               </g>
 
-              {/* Denver Headquarters Hub Beacon Pin with Concentric Ping */}
+              {/* Central Geographic Hub Beacon Pin */}
               <g transform="translate(350, 280)" className="pointer-events-none">
                 <circle cx="0" cy="0" r="22" fill="none" stroke="#F59E0B" strokeWidth="1.5" className="animate-ping" />
                 <circle cx="0" cy="0" r="12" fill="rgba(245, 158, 11, 0.3)" />
                 <circle cx="0" cy="0" r="6" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="2" />
                 <text x="12" y="4" fill="#FDE047" fontSize="10" fontFamily="monospace" fontWeight="900" style={{ textShadow: '0 2px 4px #000' }}>
-                  DENVER HQ
+                  CENTRAL HUB
                 </text>
               </g>
 
@@ -358,7 +383,7 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
 
             <div className="text-emerald-400 flex items-center gap-1.5 font-bold">
               <Activity className="w-3 h-3 text-emerald-400 animate-pulse" />
-              <span>DENVER HQ DISPATCH HUB (DOT 3891024)</span>
+              <span>DGW DISPATCH OPERATIONS</span>
             </div>
           </div>
 
@@ -491,11 +516,13 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
 
             {/* Quick Dispatch Action Button */}
             <a
-              href={`tel:${selectedTruck.driverPhone}`}
+              href="https://wa.me/923418341278?text=Hello,%20I%20would%20like%20to%20learn%20more%20about%20your%20truck%20dispatching%20services."
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-full py-2.5 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition-all shadow-md flex items-center justify-center gap-2"
             >
-              <Phone className="w-3.5 h-3.5" />
-              <span>Call Dispatch Desk: +1 (800) DGW-LOAD</span>
+              <MessageSquare className="w-3.5 h-3.5" />
+              <span>WhatsApp Dispatch Desk: +92 341 8341278</span>
             </a>
           </div>
 
@@ -506,3 +533,4 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
     </div>
   );
 };
+

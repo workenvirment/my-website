@@ -8,7 +8,7 @@ import {
   Navigation, 
   Compass,
   CheckCircle2,
-  PhoneCall
+  MessageSquare
 } from 'lucide-react';
 import { DgwButton } from '../common/DgwButton';
 
@@ -61,12 +61,12 @@ export const CinematicHero: React.FC<CinematicHeroProps> = ({ onNavigate, onSear
             <div className="flex flex-wrap items-center gap-2.5">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-300/80 text-amber-800 text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-md shadow-xs">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                <span>DISPATCHERS GLOBAL WORLD • ENTERPRISE LOGISTICS</span>
+                <span>DISPATCHING GLOBAL WORLD • DGW SOLUTIONS LLC</span>
               </div>
 
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-slate-200 text-slate-700 text-xs font-mono shadow-xs">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Denver HQ • Saad Altaf (Sole MBR) • EIN 42-4868007</span>
+                <span>DGW Solutions LLC • Owner: Saad Altaf</span>
               </div>
             </div>
 
@@ -76,14 +76,14 @@ export const CinematicHero: React.FC<CinematicHeroProps> = ({ onNavigate, onSear
                 DGW SOLUTIONS LLC
               </h1>
               
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gradient-gold leading-snug">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-amber-700 leading-snug">
                 Dispatching. Logistics. Moving Forward.
               </div>
             </div>
 
             {/* Supporting Text */}
             <p className="text-sm sm:text-base text-slate-600 max-w-xl leading-relaxed font-normal">
-              Professional dispatching and logistics solutions designed for modern trucking businesses. Dedicated back-office representation, spot market rate negotiation, and live FMCSA carrier safety vetting across North America.
+              Professional truck dispatching and logistics coordination tailored for motor carriers and owner-operators. Dedicated load sourcing, spot market rate negotiation, and comprehensive back-office operational support.
             </p>
 
             {/* Action Buttons: Explore Services & Search MC Number */}
@@ -178,11 +178,11 @@ export const CinematicHero: React.FC<CinematicHeroProps> = ({ onNavigate, onSear
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                <span>48 US States</span>
+                <span>Nationwide Coverage</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-                <span>IRS CP575G Active</span>
+                <span>FMCSA Compliant</span>
               </div>
             </div>
 
@@ -283,11 +283,13 @@ export const CinematicHero: React.FC<CinematicHeroProps> = ({ onNavigate, onSear
               {/* Fast Dispatch CTA Line */}
               <div className="pt-1 flex items-center justify-between text-xs">
                 <a
-                  href="tel:+18003495623"
+                  href="https://wa.me/923418341278?text=Hello,%20I%20would%20like%20to%20learn%20more%20about%20your%20truck%20dispatching%20services."
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-mono font-bold flex items-center justify-center gap-2 transition-colors shadow-md"
                 >
-                  <PhoneCall className="w-3.5 h-3.5 text-amber-400" />
-                  <span>24/7 Dispatch Desk: +1 (800) DGW-LOAD</span>
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>WhatsApp Dispatch Desk: +92 341 8341278</span>
                 </a>
               </div>
 
@@ -302,3 +304,4 @@ export const CinematicHero: React.FC<CinematicHeroProps> = ({ onNavigate, onSear
     </section>
   );
 };
+

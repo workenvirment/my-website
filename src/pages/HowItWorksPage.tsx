@@ -6,7 +6,7 @@ import {
   CreditCard, 
   CheckCircle2, 
   ArrowRight, 
-  Phone,
+  MessageSquare,
   HelpCircle
 } from 'lucide-react';
 import { DgwButton } from '../components/common/DgwButton';
@@ -21,68 +21,68 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
       num: '01',
       title: 'Submit Your Carrier Documents',
       icon: <FileCheck className="w-6 h-6 text-amber-600" />,
-      desc: 'Complete our simple 1-minute carrier application and send us your 3 standard documents:',
+      desc: 'Complete our carrier onboarding process by providing your standard compliance documentation:',
       bullets: [
         'Active FMCSA Operating Authority (MC / DOT certificate)',
         'Certificate of Insurance ($1,000,000 Auto Liability & $100,000 Cargo)',
         'Signed W-9 Form & Factoring Notice of Assignment (NOA)'
       ],
-      time: 'Takes under 15 minutes'
+      time: 'Fast verification process'
     },
     {
       num: '02',
-      title: 'Set Your Lane & Rate Preferences',
+      title: 'Define Lane & Operational Preferences',
       icon: <MapPin className="w-6 h-6 text-blue-600" />,
-      desc: 'Your assigned dispatcher calls you to understand your exact driving goals:',
+      desc: 'Your dedicated dispatcher consults with you to establish your operational parameters:',
       bullets: [
-        'Where do you like to run? (e.g. Midwest, Southeast, Regional, 48-States)',
-        'What is your target gross revenue and minimum Rate per Mile (RPM)?',
-        'When do you want to be home with your family?'
+        'Preferred operating territories (e.g., Midwest, Southeast, Regional, OTR)',
+        'Target rate-per-mile expectations and freight type preferences',
+        'Home-time requirements and scheduling goals'
       ],
-      time: 'Personalized driving plan'
+      time: 'Tailored operational plan'
     },
     {
       num: '03',
-      title: 'We Find & Negotiate Top Loads',
+      title: 'Load Sourcing & Rate Negotiation',
       icon: <TrendingUp className="w-6 h-6 text-emerald-600" />,
-      desc: 'We search the best loads, negotiate top dollar with brokers, and send you the Rate Confirmation:',
+      desc: 'We identify suitable freight, negotiate competitive rates with vetted brokers, and present rate confirmations:',
       bullets: [
-        'You have 100% final approval on every load. Never forced.',
-        'We verify broker credit ratings before you accept.',
-        'We complete the broker setup packet and lock in the load immediately.'
+        'You maintain 100% final approval on every load. No forced dispatch.',
+        'Broker credit checks and verification conducted prior to commitment.',
+        'Complete broker onboarding packet completion and load confirmation.'
       ],
-      time: 'Zero load board stress'
+      time: 'Proactive load management'
     },
     {
       num: '04',
-      title: 'Deliver Freight & Get Paid Fast',
+      title: 'Freight Delivery & Billing Support',
       icon: <CreditCard className="w-6 h-6 text-purple-600" />,
-      desc: 'Once delivered, send us the signed Proof of Delivery (POD/BOL):',
+      desc: 'Upon delivery completion, provide the signed Bill of Lading (BOL/POD):',
       bullets: [
-        'We submit the clean invoice to your factoring company or QuickPay same-day.',
-        'We track and collect any detention, TONU, or layover reimbursements.',
-        'We book your next backhaul in advance so you stay rolling.'
+        'Invoicing support and direct submission to your factoring company.',
+        'Documentation assistance for detention, TONU, or layover requests.',
+        'Pre-planned backhaul scheduling to maintain continuous operations.'
       ],
-      time: 'Fast payment clock'
+      time: 'Structured invoicing process'
     }
   ];
 
   const faqs = [
     {
       q: 'Do I need my own active MC Authority?',
-      a: 'Yes. DGW Solutions LLC works directly with independent motor carriers and owner-operators who operate under their own active FMCSA authority, or under a leased carrier agreement.'
+      a: 'Yes. DGW Solutions LLC works directly with independent motor carriers and owner-operators who operate under their own active FMCSA authority, or under a valid carrier agreement.'
     },
     {
       q: 'Is there any forced dispatch?',
-      a: 'Never. You maintain 100% control over your truck. If you don’t like a load, rate, or destination, we simply find you another option with zero penalties.'
+      a: 'Never. You maintain complete control over your equipment. If a particular load, rate, or lane does not meet your operational criteria, our dispatch team sources alternative options without penalty.'
     },
     {
-      q: 'How and when do I pay for dispatch services?',
-      a: 'We charge a simple, transparent flat percentage (5%–7%) only on loads that you accept and deliver. We invoice you after your factoring company funds you, with zero upfront costs.'
+      q: 'How are dispatch service fees structured?',
+      a: 'We operate on a transparent service fee model based on accepted and delivered loads. Contact our team for detailed service agreement terms and onboarding information.'
     },
     {
-      q: 'Can I cancel anytime?',
-      a: 'Yes. We do not lock you into long-term contracts. If you ever want to pause or stop, simply let us know.'
+      q: 'Are carriers required to commit to long-term contracts?',
+      a: 'No. We believe in building partnerships through consistent performance rather than restrictive long-term commitments. Flexible terms are available.'
     }
   ];
 
@@ -92,13 +92,13 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
       {/* Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <span className="px-3.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-300 text-xs font-mono font-bold uppercase shadow-xs">
-          Transparent Process
+          Structured Process
         </span>
         <h1 className="text-3xl sm:text-5xl font-display font-black text-slate-950 tracking-tight">
-          How Getting Dispatched Works
+          How Our Dispatch Process Works
         </h1>
         <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-          From first setup to your next high-paying load, here is our simple 4-step process designed to keep your wheels rolling profitably.
+          From initial onboarding to ongoing load management, our four-step dispatch framework provides organized operational support for carriers and owner-operators.
         </p>
       </div>
 
@@ -145,7 +145,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
         <div className="text-center space-y-1">
           <div className="flex items-center justify-center gap-1.5 text-amber-700 text-xs font-mono font-bold uppercase">
             <HelpCircle className="w-4 h-4" />
-            <span>Driver Questions</span>
+            <span>Carrier Inquiries</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-display font-black text-slate-950">
             Frequently Asked Questions
@@ -165,8 +165,8 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
       {/* Bottom CTA */}
       <div className="p-8 rounded-3xl bg-slate-900 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="space-y-1 text-center sm:text-left">
-          <h3 className="text-2xl font-display font-black text-white">Ready to Roll With DGW Solutions?</h3>
-          <p className="text-xs sm:text-sm text-slate-300">Set up your truck profile in 1 minute or call our dispatch desk directly.</p>
+          <h3 className="text-2xl font-display font-black text-white">Ready to Coordinate With DGW Solutions?</h3>
+          <p className="text-xs sm:text-sm text-slate-300">Submit your carrier information or contact our dispatch desk directly.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <DgwButton
@@ -175,14 +175,16 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
             icon={<ArrowRight className="w-4 h-4 text-slate-950" />}
             onClick={() => onNavigate('/contact')}
           >
-            Start Setup Form
+            Contact Dispatching Team
           </DgwButton>
           <a
-            href="tel:+18003495623"
+            href="https://wa.me/923418341278?text=Hello,%20I%20would%20like%20to%20learn%20more%20about%20your%20truck%20dispatching%20services."
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center gap-2 border border-slate-700"
           >
-            <Phone className="w-4 h-4 text-amber-400" />
-            <span>(800) DGW-LOAD</span>
+            <MessageSquare className="w-4 h-4 text-emerald-400" />
+            <span>WhatsApp Dispatch Desk</span>
           </a>
         </div>
       </div>
@@ -190,3 +192,4 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
     </div>
   );
 };
+

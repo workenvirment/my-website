@@ -44,27 +44,30 @@ export const OwnerOpDashboardView: React.FC = () => {
           <div className="flex items-center gap-1.5 text-xs">
             <button
               onClick={() => setStagedStatus('available')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
                 stagedStatus === 'available' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400'
               }`}
             >
-              🟢 Staged & Ready
+              <span className="w-2 h-2 rounded-full bg-emerald-400" />
+              <span>Staged & Ready</span>
             </button>
             <button
               onClick={() => setStagedStatus('in-transit')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
                 stagedStatus === 'in-transit' ? 'bg-cyan-600 text-white shadow-sm' : 'bg-slate-900 text-slate-400'
               }`}
             >
-              🔵 In Transit
+              <span className="w-2 h-2 rounded-full bg-cyan-400" />
+              <span>In Transit</span>
             </button>
             <button
               onClick={() => setStagedStatus('off-duty')}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all flex items-center gap-1.5 ${
                 stagedStatus === 'off-duty' ? 'bg-slate-700 text-white shadow-sm' : 'bg-slate-900 text-slate-400'
               }`}
             >
-              ⚪ Rest Break
+              <span className="w-2 h-2 rounded-full bg-slate-400" />
+              <span>Rest Break</span>
             </button>
           </div>
         </div>
@@ -92,7 +95,7 @@ export const OwnerOpDashboardView: React.FC = () => {
             PREFERRED RUNNING LANES
           </span>
           <div className="flex flex-wrap gap-1.5">
-            {['Texas Intrastate', 'TX ➔ OK ➔ AR', 'TX ➔ Atlanta GA', 'Gulf Coast Corridor'].map((lane) => (
+            {['Texas Intrastate', 'TX - OK - AR', 'TX - Atlanta GA', 'Gulf Coast Corridor'].map((lane) => (
               <span key={lane} className="px-2.5 py-1 rounded-xl bg-slate-950 border border-white/5 text-slate-300 font-mono text-xs">
                 {lane}
               </span>

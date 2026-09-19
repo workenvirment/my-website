@@ -164,7 +164,7 @@ export const MockLoadBoard: React.FC = () => {
               onClick={() => setSelectedLoad(null)}
               className="text-xs text-slate-500 hover:text-slate-800 font-bold"
             >
-              Close Details ✕
+              Close Details
             </button>
           </div>
 

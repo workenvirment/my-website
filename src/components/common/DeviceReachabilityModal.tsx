@@ -71,7 +71,7 @@ export const DeviceReachabilityModal: React.FC<DeviceReachabilityModalProps> = (
         <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-300 space-y-2 text-xs font-mono">
           <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase">
             <span>Public HTTPS URL:</span>
-            <span className="text-emerald-700 font-black">SSL Secured 🔒</span>
+            <span className="text-emerald-700 font-black">SSL Secured</span>
           </div>
           <div className="flex items-center justify-between gap-2">
             <input

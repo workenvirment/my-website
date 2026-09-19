@@ -20,17 +20,17 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
       {/* Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <span className="px-3.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-300 text-xs font-mono font-bold uppercase shadow-xs">
-          Company Identity & Integrity
+          Company Overview
         </span>
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-display font-black text-slate-950 tracking-tight">
-          About DGW SOLUTIONS LLC
+          About DGW Solutions LLC
         </h1>
         <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-          <strong className="text-slate-950">Dispatchers Global World (DGW)</strong> is a professional truck dispatching and transportation management company founded by <strong className="text-amber-800">Saad Altaf</strong>, delivering dedicated back-office coordination for independent motor carriers across all 48 contiguous US states.
+          <strong className="text-slate-950">Dispatching Global World</strong> is the dispatching division of <strong className="text-slate-950">DGW Solutions LLC</strong>, providing professional dispatch support for carriers and owner-operators. Our team assists with freight coordination, broker communication, load management, and day-to-day dispatching requirements.
         </p>
       </div>
 
-      {/* Official Corporate Filing Verification Card */}
+      {/* Official Corporate Entity Information Card */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
           <div className="flex items-center gap-3">
@@ -38,55 +38,55 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-950">Official Federal Corporate Registration</h2>
-              <p className="text-xs text-slate-500 font-mono">Department of the Treasury • Internal Revenue Service (IRS Notice CP575G)</p>
+              <h2 className="text-lg font-bold text-slate-950">Commercial Logistics Operation</h2>
+              <p className="text-xs text-slate-500 font-mono">Professional Truck Dispatching & Freight Coordination Services</p>
             </div>
           </div>
           <span className="px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-mono font-bold">
-            VERIFIED ACTIVE BUSINESS
+            DEDICATED DISPATCH DIVISION
           </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="text-slate-500 text-[10px] uppercase block">LEGAL ENTITY</span>
+            <span className="text-slate-500 text-[10px] uppercase block">COMPANY NAME</span>
             <span className="font-bold text-slate-950 text-sm block">DGW SOLUTIONS LLC</span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="text-slate-500 text-[10px] uppercase block">FOUNDER / SOLE MEMBER</span>
-            <span className="font-bold text-slate-950 text-sm block">SAAD ALTAF</span>
+            <span className="text-slate-500 text-[10px] uppercase block">DISPATCHING DIVISION</span>
+            <span className="font-bold text-slate-950 text-sm block">DISPATCHING GLOBAL WORLD</span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="text-slate-500 text-[10px] uppercase block">HEADQUARTERS ADDRESS</span>
-            <span className="font-bold text-slate-800 text-xs block">9057 E 50th Ave Ste 22C, Denver, CO 80238</span>
+            <span className="text-slate-500 text-[10px] uppercase block">OWNER</span>
+            <span className="font-bold text-amber-700 text-sm block">SAAD ALTAF</span>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="text-slate-500 text-[10px] uppercase block">FEDERAL TAX ID (EIN)</span>
-            <span className="font-bold text-amber-700 text-sm block">42-4868007</span>
+            <span className="text-slate-500 text-[10px] uppercase block">OPERATIONAL SCOPE</span>
+            <span className="font-bold text-slate-800 text-xs block">Interstate Carrier Support</span>
           </div>
         </div>
       </div>
 
-      {/* Mission & Founding Story */}
+      {/* Mission & Operational Focus */}
       <section className="p-8 md:p-12 rounded-3xl bg-white border border-slate-200 shadow-xl space-y-6 text-slate-700">
         <div className="flex items-center gap-2 text-amber-700">
           <Target className="w-5 h-5" />
-          <span className="font-mono text-xs font-bold uppercase">Our Company Mission</span>
+          <span className="font-mono text-xs font-bold uppercase">Our Operational Focus</span>
         </div>
 
         <h2 className="text-2xl sm:text-3xl font-display font-black text-slate-950">
-          Built Specifically for Independent Motor Carriers & Fleet Owners
+          Professional Dispatching Services Designed For Carriers
         </h2>
 
         <p className="text-sm leading-relaxed text-slate-600">
-          Driving an 80,000 lb commercial rig for 11 hours every day is demanding enough. Independent owner-operators should not have to spend their rest breaks calling brokers who lowball them, filling out 10-page carrier packets, and worrying about whether their invoices will get paid on time.
+          Independent carriers and owner-operators need organized, dependable back-office support. Managing daily broker communications, negotiating freight details, auditing rate confirmations, and handling logistics paperwork requires structured coordination so drivers can stay focused on the road.
         </p>
 
         <p className="text-sm leading-relaxed text-slate-600">
-          DGW Solutions LLC was founded by Saad Altaf in Denver, Colorado to give truckers a dedicated, professional back-office partner. We handle the phone negotiations, paperwork, route guidance, and broker check-calls behind the scenes so drivers can stay focused on safety and making top revenue.
+          Dispatching Global World — DGW Solutions LLC, founded and led by Saad Altaf, delivers dedicated dispatch support for motor carriers across regional and interstate freight corridors. We provide transparent rate negotiation, streamlined broker packets, proactive tracking coordination, and immediate document turnaround.
         </p>
 
         {/* 3 Pillars */}
@@ -94,49 +94,49 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
             <span className="font-display font-black text-amber-700 text-2xl">100%</span>
             <span className="font-bold text-slate-900 text-sm block">Carrier Independence</span>
-            <p className="text-xs text-slate-600">You retain total ownership of your authority and equipment.</p>
+            <p className="text-xs text-slate-600">You retain complete authority over your operating decisions and equipment.</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="font-display font-black text-blue-700 text-2xl">Zero</span>
-            <span className="font-bold text-slate-900 text-sm block">Forced Dispatch</span>
-            <p className="text-xs text-slate-600">You have final approval on every rate confirmation before booking.</p>
+            <span className="font-display font-black text-blue-700 text-2xl">Full</span>
+            <span className="font-bold text-slate-900 text-sm block">Rate Transparency</span>
+            <p className="text-xs text-slate-600">You review the original broker Rate Confirmation with complete terms before booking.</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-            <span className="font-display font-black text-emerald-700 text-2xl">48 States</span>
-            <span className="font-bold text-slate-900 text-sm block">Nationwide Coverage</span>
-            <p className="text-xs text-slate-600">Active freight corridors across the entire United States.</p>
+            <span className="font-display font-black text-emerald-700 text-2xl">Proactive</span>
+            <span className="font-bold text-slate-900 text-sm block">Freight Coordination</span>
+            <p className="text-xs text-slate-600">Structured freight planning designed to support your operational schedule.</p>
           </div>
         </div>
       </section>
 
-      {/* 4 Guarantees of Service */}
+      {/* Operational Principles */}
       <section className="space-y-6">
         <div className="border-b border-slate-200 pb-4">
-          <span className="text-xs font-mono font-bold text-amber-700 uppercase">Operational Standard</span>
+          <span className="text-xs font-mono font-bold text-amber-700 uppercase">Operational Principles</span>
           <h2 className="text-2xl font-display font-black text-slate-950 mt-0.5">
-            The 4 Promises We Make To Every Driver
+            Core Standards of Our Dispatching Operation
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
             {
-              title: '1. Complete Rate Transparency',
-              desc: 'We present the exact, original broker Rate Confirmation to you. DGW never hides broker deductions or takes undisclosed cuts. You know exactly what the broker pays on every load.'
+              title: '1. Complete Linehaul Transparency',
+              desc: 'We present the original broker Rate Confirmation directly to you. DGW Solutions LLC operates with total rate transparency so you always know the exact terms negotiated with the broker.'
             },
             {
-              title: '2. Advance Load Planning ("We Look Ahead")',
-              desc: 'While you are en route on Leg 1, our dispatch team is already searching and negotiating your next backhaul so your wheels keep turning with zero unpaid deadhead.'
+              title: '2. Proactive Load Planning',
+              desc: 'Our dispatching team plans ahead for your subsequent backhaul loads, minimizing unpaid dwell time and keeping your equipment scheduled efficiently.'
             },
             {
-              title: '3. Fast Broker Packet Setup (Under 5 Mins)',
-              desc: 'When high-paying loads appear on load boards, minutes matter. We maintain your updated Certificate of Insurance (COI), W-9, and MC Authority to complete broker onboarding packets in under 5 minutes.'
+              title: '3. Responsive Broker Packet Administration',
+              desc: 'We maintain your carrier documentation (Certificate of Insurance, W-9, and MC Authority) to process broker onboarding packets quickly and accurately.'
             },
             {
-              title: '4. Dedicated Personal Dispatcher',
-              desc: 'You won’t be routed to an anonymous call center. You work directly with a dedicated dispatcher who knows your truck, preferred lanes, and weekly revenue targets by heart.'
+              title: '4. Dedicated Dispatch Communication',
+              desc: 'Work directly with dedicated dispatch personnel who understand your equipment specifications, preferred operating lanes, and scheduling requirements.'
             }
           ].map((pillar, i) => (
             <div key={i} className="p-6 rounded-3xl bg-white border border-slate-200 shadow-md space-y-2">
@@ -151,13 +151,13 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* Contact & Dispatch Desk Info */}
+      {/* Contact & Operations Desk Info */}
       <div className="p-8 sm:p-10 rounded-3xl bg-slate-900 text-white shadow-2xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
           <div>
-            <span className="text-xs font-mono font-bold text-amber-400 uppercase">Denver Operations Desk</span>
+            <span className="text-xs font-mono font-bold text-amber-400 uppercase">Dispatching Division</span>
             <h3 className="text-2xl font-display font-black text-white mt-0.5">
-              Connect Directly With Our Team
+              Connect With Our Dispatching Team
             </h3>
           </div>
           <DgwButton
@@ -166,17 +166,22 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             icon={<ArrowRight className="w-4 h-4 text-slate-950" />}
             onClick={() => onNavigate('/contact')}
           >
-            Fill Setup Application
+            Contact Dispatching Team
           </DgwButton>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
           <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-800/80 border border-slate-700">
-            <Phone className="w-5 h-5 text-amber-400 shrink-0" />
+            <Phone className="w-5 h-5 text-emerald-400 shrink-0" />
             <div>
-              <span className="text-slate-400 block text-[10px]">PHONE</span>
-              <a href="tel:+18003495623" className="font-bold text-white hover:text-amber-400">
-                +1 (800) DGW-LOAD
+              <span className="text-slate-400 block text-[10px]">WHATSAPP</span>
+              <a 
+                href="https://wa.me/923418341278?text=Hello,%20I%20would%20like%20to%20learn%20more%20about%20your%20truck%20dispatching%20services." 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="font-bold text-white hover:text-amber-400"
+              >
+                +92 341 8341278
               </a>
             </div>
           </div>
@@ -185,8 +190,11 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
             <Mail className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
               <span className="text-slate-400 block text-[10px]">EMAIL</span>
-              <a href="mailto:dispatch.ops@dgwsolutions.com" className="font-bold text-white hover:text-amber-400">
-                dispatch.ops@dgwsolutions.com
+              <a 
+                href="mailto:dispachingglobal@dgwsolutionllc.com" 
+                className="font-bold text-white hover:text-amber-400 break-all"
+              >
+                dispachingglobal@dgwsolutionllc.com
               </a>
             </div>
           </div>
@@ -194,8 +202,8 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
           <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-800/80 border border-slate-700">
             <MapPin className="w-5 h-5 text-amber-400 shrink-0" />
             <div>
-              <span className="text-slate-400 block text-[10px]">OFFICE</span>
-              <span className="font-bold text-white">Denver, CO 80238</span>
+              <span className="text-slate-400 block text-[10px]">LEADERSHIP</span>
+              <span className="font-bold text-white">Saad Altaf — Owner</span>
             </div>
           </div>
         </div>

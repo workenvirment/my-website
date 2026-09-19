@@ -18,58 +18,58 @@ interface ServicesPageProps {
 export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate }) => {
   const services = [
     {
-      id: 'load-booking',
-      title: 'Dedicated Load Finding & Booking',
+      id: 'truck-dispatching',
+      title: 'Truck Dispatching',
       icon: <Search className="w-6 h-6 text-amber-600" />,
-      desc: 'We continuously search live freight boards, direct broker portals, and established shipper relationships to book loads that match your specific trailer, preferred states, and revenue targets.',
+      desc: 'Professional dispatch support focused on freight coordination, load research, broker communication, and operational organization.',
       highlights: [
-        'No deadhead time spent searching load boards at rest stops',
-        'Advance planning: We book your backhaul before you even unload',
-        '100% your final approval on every single load tender'
+        'Dedicated freight research aligned with your equipment',
+        'Structured daily dispatch planning and scheduling',
+        'Full review and carrier approval on every load confirmation'
       ]
     },
     {
-      id: 'rate-negotiation',
-      title: 'Aggressive Rate Negotiation',
+      id: 'load-coordination',
+      title: 'Load Coordination',
       icon: <TrendingUp className="w-6 h-6 text-emerald-600" />,
-      desc: 'We negotiate directly with freight brokers on your behalf to secure the highest possible Rate per Mile (RPM), plus guaranteed compensation for detention, layover, and driver assistance.',
+      desc: 'Assistance with identifying freight opportunities aligned with the carrier\'s operational requirements and preferred operating areas.',
       highlights: [
-        'We never accept cheap bottom-dollar rates',
-        'Detention clauses verified prior to booking ($50–$75/hr after 2 hrs)',
-        'Full linehaul transparency: You see the original broker Rate Confirmation'
+        'Screening freight requirements and appointment windows',
+        'Multi-leg route scheduling and return trip coordination',
+        'Carrier maintains 100% authorization over load selection'
       ]
     },
     {
-      id: 'broker-packets',
-      title: 'Broker Setup Packets & Compliance',
+      id: 'broker-communication',
+      title: 'Broker Communication',
       icon: <FileText className="w-6 h-6 text-blue-600" />,
-      desc: 'When a high-paying load appears, minutes matter. We maintain your carrier packet library (COI, W-9, MC Authority, Notice of Assignment) and complete broker onboarding packets in under 5 minutes.',
+      desc: 'Professional communication with brokers regarding load details, rate information, pickup and delivery requirements, and documentation.',
       highlights: [
-        'Instant Certificate of Insurance (COI) submission to new brokers',
-        'Zero lost loads due to paperwork delays',
-        'Assistance with broker credit checks & factoring pre-approvals'
+        'Direct communication regarding facility appointments and requirements',
+        'Prompt transmission of Certificate of Insurance and W-9 packets',
+        'Verification of original Rate Confirmation documentation'
       ]
     },
     {
-      id: 'billing-factoring',
-      title: 'Billing, POD & Factoring Assistance',
+      id: 'dispatch-management',
+      title: 'Dispatch Management',
       icon: <CreditCard className="w-6 h-6 text-purple-600" />,
-      desc: 'Once your load is delivered, send us the signed Proof of Delivery (POD/BOL). We inspect it for clean stamps, audit the rate confirmation, and submit it immediately to your factoring company or QuickPay.',
+      desc: 'Organized support for managing dispatch-related activities throughout the transportation process from pickup to delivery.',
       highlights: [
-        'Fast same-day invoice processing so your payment clock starts immediately',
-        'Direct coordination with your factoring company (e.g. RTS, Triumph, OTR)',
-        'Assistance collecting unpaid lumper fees, TONU, or detention'
+        'Organized document workflow for Bills of Lading and Proof of Delivery',
+        'Assistance coordinating with your factoring company or billing department',
+        'Clear tracking of completed loads and billing packets'
       ]
     },
     {
-      id: 'road-support',
-      title: '24/7 Road & Check-Call Support',
+      id: 'carrier-support',
+      title: 'Carrier Support',
       icon: <Headphones className="w-6 h-6 text-rose-600" />,
-      desc: 'Brokers require regular tracking updates and check-ins. We handle all broker phone calls and emails while you drive safely, and step in to resolve receiver gate delays or emergency reroutes.',
+      desc: 'Dedicated assistance designed around the operational needs of owner-operators and independent motor carriers.',
       highlights: [
-        'Safe driving: No answering dangerous phone calls in heavy traffic',
-        'Facility appointment rescheduling and lumper receipt submission',
-        'Emergency after-hours dispatch assistance whenever you are rolling'
+        'Proactive assistance during transit and facility check-ins',
+        'Assistance with gate delays, detention logging, and rescheduling',
+        'Accessible communication channel with your dispatching team'
       ]
     }
   ];
@@ -80,13 +80,13 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate }) => {
       {/* Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <span className="px-3.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-300 text-xs font-mono font-bold uppercase shadow-xs">
-          What We Do For You
+          Service Capabilities
         </span>
         <h1 className="text-3xl sm:text-5xl font-display font-black text-slate-950 tracking-tight">
-          Professional Truck Dispatching Services
+          Professional Logistics & Dispatching Services
         </h1>
         <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-          We handle the back-office operations, phone calls, and paperwork so you can keep your focus on driving safely and making top revenue.
+          Comprehensive dispatch support built for independent carriers and owner-operators, assisting with freight coordination, broker communication, and operational efficiency.
         </p>
       </div>
 
@@ -129,42 +129,42 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate }) => {
                 icon={<ArrowRight className="w-3.5 h-3.5 text-amber-400" />}
                 onClick={() => onNavigate('/contact')}
               >
-                Get Started
+                Inquire Service
               </DgwButton>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Transparent Pricing Section */}
+      {/* Transparent Service Model */}
       <div className="p-8 sm:p-12 rounded-3xl bg-white border border-slate-200 shadow-xl space-y-6 text-center max-w-4xl mx-auto">
         <div className="space-y-2">
-          <span className="text-xs font-mono font-bold text-amber-700 uppercase">Honest & Transparent</span>
+          <span className="text-xs font-mono font-bold text-amber-700 uppercase">Transparent Operations</span>
           <h2 className="text-3xl font-display font-black text-slate-950">
-            Simple Flat-Percentage Pricing
+            Straightforward Service Structure
           </h2>
           <p className="text-sm text-slate-600 max-w-xl mx-auto">
-            No hidden fees, no weekly minimums, no setup costs, and no forced dispatch. You only pay a small percentage when you accept and deliver a load.
+            Clear dispatch representation focused on carrier independence, reliable broker communication, and operational efficiency.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 text-left">
           <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-            <span className="text-xs font-mono text-slate-500 uppercase font-bold">Standard Dispatch</span>
-            <div className="text-3xl font-black text-slate-950">5% – 7%</div>
-            <p className="text-xs text-slate-600">Per booked load. Full dedicated dispatch, paperwork, rate negotiation & check-calls.</p>
+            <span className="text-xs font-mono text-slate-500 uppercase font-bold">Dedicated Dispatch</span>
+            <div className="text-xl font-black text-slate-950">Full Support</div>
+            <p className="text-xs text-slate-600">Complete administrative back-office support, paperwork coordination, and broker communication.</p>
           </div>
 
           <div className="p-6 rounded-2xl bg-amber-50 border border-amber-300 space-y-2">
-            <span className="text-xs font-mono text-amber-800 uppercase font-bold">Upfront Cost</span>
-            <div className="text-3xl font-black text-amber-900">$0.00</div>
-            <p className="text-xs text-amber-800">Zero setup fees. Zero contract sign-up charges. Pay only after your wheels roll.</p>
+            <span className="text-xs font-mono text-amber-800 uppercase font-bold">Carrier Control</span>
+            <div className="text-xl font-black text-amber-900">100% Approval</div>
+            <p className="text-xs text-amber-800">You review and approve each rate confirmation before any load booking is finalized.</p>
           </div>
 
           <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-            <span className="text-xs font-mono text-slate-500 uppercase font-bold">Contract Lock-In</span>
-            <div className="text-3xl font-black text-slate-950">0 Days</div>
-            <p className="text-xs text-slate-600">No long-term commitments. Cancel anytime with zero penalty if you aren’t satisfied.</p>
+            <span className="text-xs font-mono text-slate-500 uppercase font-bold">Flexibility</span>
+            <div className="text-xl font-black text-slate-950">Zero Forced Dispatch</div>
+            <p className="text-xs text-slate-600">Work on your preferred lanes and schedule with full operational independence.</p>
           </div>
         </div>
 
@@ -175,7 +175,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate }) => {
             icon={<ArrowRight className="w-4 h-4 text-amber-400" />}
             onClick={() => onNavigate('/contact')}
           >
-            Apply To Start Dispatching
+            Contact Dispatching Team
           </DgwButton>
         </div>
       </div>
@@ -183,15 +183,17 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate }) => {
       {/* Bottom CTA Banner */}
       <div className="p-8 rounded-3xl bg-slate-900 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="space-y-1 text-center sm:text-left">
-          <h3 className="text-2xl font-display font-black text-white">Have Questions About Our Services?</h3>
-          <p className="text-xs sm:text-sm text-slate-300">Speak directly with our Denver dispatch desk.</p>
+          <h3 className="text-2xl font-display font-black text-white">Have Questions About Our Dispatch Services?</h3>
+          <p className="text-xs sm:text-sm text-slate-300">Connect directly with the Dispatching Global World team.</p>
         </div>
         <a
-          href="tel:+18003495623"
-          className="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs flex items-center gap-2 shadow-lg transition-colors"
+          href="https://wa.me/923418341278?text=Hello,%20I%20would%20like%20to%20learn%20more%20about%20your%20truck%20dispatching%20services."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg transition-colors"
         >
           <Phone className="w-4 h-4" />
-          <span>Call +1 (800) DGW-LOAD</span>
+          <span>WhatsApp Dispatching Team</span>
         </a>
       </div>
 

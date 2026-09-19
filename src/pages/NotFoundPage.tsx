@@ -91,7 +91,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({ onNavigate }) => {
 
         <div className="text-[11px] text-slate-500 font-mono flex items-center justify-center gap-1">
           <HelpCircle className="w-3.5 h-3.5" />
-          <span>Need dispatch assistance? Call 24/7 Operations at +1 (800) DGW-LOAD</span>
+          <span>Need dispatch assistance? Contact our team via WhatsApp at +92 341 8341278</span>
         </div>
 
       </div>

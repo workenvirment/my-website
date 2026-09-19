@@ -63,7 +63,7 @@ export const AnalyticsView: React.FC = () => {
         <div className="p-5 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-1">
           <span className="text-[10px] font-mono font-bold uppercase text-slate-400">ON-TIME DELIVERY RATE</span>
           <p className="font-display font-black text-purple-700 text-2xl">98.4%</p>
-          <span className="text-slate-500 text-[11px] font-mono">Broker rating index: 5.0 ★</span>
+          <span className="text-slate-500 text-[11px] font-mono">Broker rating index: 5.0 / 5.0</span>
         </div>
       </div>
 

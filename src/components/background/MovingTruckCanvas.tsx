@@ -233,8 +233,8 @@ export const MovingTruckCanvas: React.FC<MovingTruckCanvasProps> = ({
 
             <div className="flex items-center justify-between px-4 z-10">
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-lg bg-cyan-500 flex items-center justify-center text-slate-950 text-[9px] font-black shadow-lg">
-                  ❄️
+                <div className="w-5 h-5 rounded-lg bg-cyan-500 flex items-center justify-center text-slate-950 text-[8px] font-black shadow-lg">
+                  COLD
                 </div>
                 <div>
                   <span className="font-display font-black text-xs sm:text-sm text-white tracking-wider block">
@@ -751,7 +751,7 @@ export const MovingTruckCanvas: React.FC<MovingTruckCanvasProps> = ({
         {/* 10-Second Countdown Badge */}
         <div className="flex items-center gap-1.5 pr-2 border-r border-white/15 text-amber-300 font-bold bg-amber-500/10 px-2 py-0.5 rounded-md">
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-          <span>CHANGES IN: {secondsRemaining}s ➔ {nextTruck.name.split(' ')[0]}</span>
+          <span>CHANGES IN: {secondsRemaining}s to {nextTruck.name.split(' ')[0]}</span>
         </div>
 
         <div className="flex items-center gap-1 pr-2 border-r border-white/15 text-slate-300">

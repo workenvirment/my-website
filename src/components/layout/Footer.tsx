@@ -1,7 +1,6 @@
 import React from 'react';
 import { 
   ShieldCheck, 
-  MapPin, 
   Phone, 
   Mail,
   Truck,
@@ -32,24 +31,24 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   DGW<span className="text-amber-400">SOLUTIONS</span> LLC
                 </span>
                 <span className="font-mono text-[9px] text-slate-400 block tracking-wider">
-                  DISPATCHERS GLOBAL WORLD • DENVER HQ
+                  DISPATCHING GLOBAL WORLD
                 </span>
               </div>
             </div>
 
             <p className="text-slate-400 leading-relaxed text-xs">
-              Dedicated truck dispatching, aggressive rate negotiation, broker paperwork, and 24/7 road operations for independent motor carriers across the United States.
+              Professional dispatching support for carriers and owner-operators, assisting with freight coordination, broker communication, and operational efficiency.
             </p>
 
-            {/* Official Filing Box */}
+            {/* Official Ownership Box */}
             <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 space-y-1 font-mono text-[11px] text-slate-300">
               <div className="flex items-center justify-between text-amber-400 font-bold">
-                <span>IRS VERIFIED BUSINESS</span>
+                <span>BUSINESS ENTITY</span>
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
               </div>
-              <div>OWNER: <strong>SAAD ALTAF (SOLE MBR)</strong></div>
-              <div>EIN: <strong>42-4868007</strong></div>
-              <div>DENVER, CO 80238</div>
+              <div>COMPANY: <strong>DGW SOLUTIONS LLC</strong></div>
+              <div>DIVISION: <strong>DISPATCHING GLOBAL WORLD</strong></div>
+              <div>OWNER: <strong>SAAD ALTAF</strong></div>
             </div>
           </div>
 
@@ -62,10 +61,10 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               {[
                 { label: 'Home', path: '/' },
                 { label: 'Dispatch Services', path: '/services' },
-                { label: 'How It Works (3 Steps)', path: '/how-it-works' },
+                { label: 'How It Works', path: '/how-it-works' },
                 { label: 'Equipment We Dispatch', path: '/equipment' },
                 { label: 'About DGW Solutions LLC', path: '/about' },
-                { label: 'Contact & Apply Now', path: '/contact' },
+                { label: 'Contact Dispatching Team', path: '/contact' },
               ].map((link) => (
                 <li key={link.path}>
                   <button
@@ -106,36 +105,50 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </ul>
           </div>
 
-          {/* Col 4: 24/7 Operations Contact */}
+          {/* Col 4: Operations Contact */}
           <div className="space-y-3">
             <span className="text-xs font-mono font-bold uppercase tracking-wider text-white block">
-              24/7 Dispatch Desk
+              Contact Dispatching Team
             </span>
             <div className="space-y-3 text-slate-300">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <span className="text-xs">9057 E 50th Ave Ste 22C<br />Denver, CO 80238</span>
+              <div>
+                <span className="text-[10px] font-mono text-slate-500 uppercase block">Owner</span>
+                <span className="text-xs font-bold text-white">Saad Altaf</span>
               </div>
 
               <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href="tel:+18003495623" className="hover:text-amber-400 font-mono font-bold text-xs">
-                  +1 (800) DGW-LOAD
-                </a>
+                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
+                <div>
+                  <span className="text-[10px] font-mono text-slate-500 uppercase block">WhatsApp</span>
+                  <a 
+                    href="https://wa.me/923418341278?text=Hello,%20I%20would%20like%20to%20learn%20more%20about%20your%20truck%20dispatching%20services." 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="hover:text-amber-400 font-mono font-bold text-xs"
+                  >
+                    +92 341 8341278
+                  </a>
+                </div>
               </div>
 
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href="mailto:dispatch.ops@dgwsolutions.com" className="hover:text-amber-400 font-mono text-xs">
-                  dispatch.ops@dgwsolutions.com
-                </a>
+                <div>
+                  <span className="text-[10px] font-mono text-slate-500 uppercase block">Email</span>
+                  <a 
+                    href="mailto:dispachingglobal@dgwsolutionllc.com" 
+                    className="hover:text-amber-400 font-mono text-xs break-all"
+                  >
+                    dispachingglobal@dgwsolutionllc.com
+                  </a>
+                </div>
               </div>
 
               <div className="flex items-start gap-2.5 pt-1">
                 <Clock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span className="text-[11px] text-slate-400">
-                  Mon – Sat: 6:00 AM – 8:00 PM MST<br />
-                  24/7 Emergency Road Support
+                  Professional Dispatching Support<br />
+                  Dedicated Operations Desk
                 </span>
               </div>
             </div>
@@ -146,18 +159,21 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
         {/* Bottom Legal Copyright Bar */}
         <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 font-mono text-[11px]">
           <div>
-            © 2026 DGW SOLUTIONS LLC. All Rights Reserved. Sole Member: Saad Altaf.
+            © 2026 DGW Solutions LLC. All rights reserved.
           </div>
 
           <div className="flex items-center gap-4">
             <button onClick={() => onNavigate('/contact')} className="hover:text-slate-300">
-              Denver HQ Contact
+              Contact Team
             </button>
             <button onClick={() => onNavigate('/services')} className="hover:text-slate-300">
               Dispatch Services
             </button>
             <button onClick={() => onNavigate('/how-it-works')} className="hover:text-slate-300">
               How It Works
+            </button>
+            <button onClick={() => onNavigate('/privacy-policy')} className="hover:text-slate-300">
+              Privacy & Terms
             </button>
           </div>
         </div>

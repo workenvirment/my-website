@@ -44,7 +44,7 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
           {/* Background Image */}
           <img
             src="/images/intermodal_port.jpg"
-            alt="Real-Time Tracking"
+            alt="Intermodal shipping container port terminal and freight distribution center"
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
           />
           {/* Gradient Overlay */}
@@ -58,10 +58,10 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
               Advanced Real-Time Tracking System
             </h3>
             <p className="text-xs text-slate-300 line-clamp-2">
-              Proactive milestone check-calls, rate index analytics, and continuous corridor monitoring across North America.
+              Multi-state GPS corridor monitoring, milestone alerts, and active ELD ping verification for shippers and brokers.
             </p>
             <div className="pt-2 flex items-center gap-1 text-xs font-bold text-brand-orange">
-              <span>Inspect Live Board</span>
+              <span>Explore Live Board</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -108,7 +108,7 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
           {/* Background Image */}
           <img
             src="/images/cargo_warehouse_hub.jpg"
-            alt="Compliance Hub"
+            alt="Logistics warehouse loading dock and freight compliance facility"
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
           />
           {/* Gradient Overlay */}
@@ -139,7 +139,7 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
           {/* Background Image */}
           <img
             src="/images/fleet_red_rigs.jpg"
-            alt="Fleet Equipment"
+            alt="Commercial semi-truck fleet parked at transportation terminal"
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
           />
           {/* Gradient Overlay */}

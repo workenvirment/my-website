@@ -23,7 +23,7 @@ export const McLookupPage: React.FC<McLookupPageProps> = ({ onNavigate }) => {
         </div>
 
         <div className="text-[11px] font-mono text-slate-400">
-          DENVER HQ: 9057 E 50th Ave • EIN 42-4868007
+          DGW SOLUTIONS LLC • DISPATCHING GLOBAL WORLD
         </div>
       </div>
 

@@ -130,7 +130,7 @@ export const MC_DATABASE_RECORDS: McCarrierRecord[] = [
     cargoCarried: ['Heavy Machinery', 'Lumber', 'Steel Coils', 'Overdimensional Cargo'],
     equipmentTypes: ['48 FT Flatbed', '53 FT Stepdeck', 'RGN / Lowboy'],
     address: {
-      street: '9057 E 50th Ave Ste 18B',
+      street: '1842 Commerce Blvd Ste 400',
       city: 'Denver',
       state: 'CO',
       zip: '80238',
@@ -139,7 +139,7 @@ export const MC_DATABASE_RECORDS: McCarrierRecord[] = [
     contact: {
       phone: '(303) 555-7194',
       email: 'ops@rmexpresshauling.com',
-      representative: 'Saad Altaf (Regional Dispatch Director)'
+      representative: 'Robert Miller (Operations Director)'
     },
     insurance: {
       bipdRequired: 1000000,

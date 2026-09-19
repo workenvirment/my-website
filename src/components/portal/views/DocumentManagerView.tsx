@@ -218,7 +218,7 @@ export const DocumentManagerView: React.FC = () => {
 
               {uploadSuccess ? (
                 <div className="p-3 rounded-xl bg-emerald-50 text-emerald-800 font-bold text-center border border-emerald-200 animate-in fade-in">
-                  ✓ Document uploaded and verified successfully!
+                  Document uploaded and verified successfully!
                 </div>
               ) : (
                 <button

@@ -96,7 +96,7 @@ export const CarrierDashboardView: React.FC = () => {
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <div>
             <span className="text-[10px] text-slate-400 block">W-9 & EIN</span>
-            <span className="font-bold text-white">42-4868007 Active</span>
+            <span className="font-bold text-white">Verified on file</span>
           </div>
         </div>
 

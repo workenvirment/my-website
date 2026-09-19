@@ -101,7 +101,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   const roleOptions: { role: UserRole; title: string; subtitle: string; icon: React.FC<{ className?: string }> }[] = [
-    { role: 'super-admin', title: 'Saad Altaf (Sole MBR)', subtitle: 'Super Admin • Denver HQ', icon: Crown },
+    { role: 'super-admin', title: 'Saad Altaf', subtitle: 'Owner • DGW Solutions LLC', icon: Crown },
     { role: 'admin', title: 'Operations Admin', subtitle: 'Platform Manager & Control', icon: Wrench },
     { role: 'carrier', title: 'Carrier Fleet', subtitle: '14 Power Units • Vance Lines', icon: Truck },
     { role: 'owner-operator', title: 'Owner Operator', subtitle: '40ft Hotshot • Travis Cole', icon: UserCheck },
@@ -129,7 +129,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 DGW Command Access
               </h3>
               <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
-                <span>Dispatchers Global World LLC</span>
+                <span>Dispatching Global World • DGW Solutions LLC</span>
                 {isFirebaseActive ? (
                   <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
                     Firebase OAuth 2.0
@@ -480,9 +480,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] text-slate-500">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-            <span>FMCSA & IRS CP575G Compliant</span>
+            <span>FMCSA & Safety Compliant</span>
           </div>
-          <span className="font-mono">EIN 42-4868007</span>
+          <span className="font-mono">DGW Solutions LLC</span>
         </div>
 
       </div>

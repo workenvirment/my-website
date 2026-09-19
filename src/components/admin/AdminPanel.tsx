@@ -24,11 +24,11 @@ export const AdminPanel: React.FC = () => {
     {
       id: 'usr-saad-01',
       name: 'Saad Altaf',
-      email: 'saad.altaf@dgwsolutions.com',
+      email: 'dispachingglobal@dgwsolutionllc.com',
       avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&auto=format&fit=crop&q=80',
       role: 'super-admin',
-      companyName: 'DGW SOLUTIONS LLC (Sole MBR)',
-      phone: '+1 (800) DGW-LOAD',
+      companyName: 'DGW Solutions LLC',
+      phone: '+92 341 8341278',
       status: 'active',
       loginMethod: 'google'
     },
@@ -71,11 +71,11 @@ export const AdminPanel: React.FC = () => {
     {
       id: 'usr-ops-admin',
       name: 'Elena Rostova',
-      email: 'operations@dgwsolutions.com',
+      email: 'operations@dgwsolutionllc.com',
       avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
       role: 'admin',
-      companyName: 'DGW Command Operations HQ',
-      phone: '(303) 555-7194',
+      companyName: 'DGW Solutions LLC',
+      phone: '+92 341 8341278',
       status: 'active',
       loginMethod: 'email'
     }
@@ -159,17 +159,17 @@ export const AdminPanel: React.FC = () => {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 rounded-full bg-brand-orange/20 text-brand-orange border border-brand-orange/30 text-xs font-mono font-bold uppercase">
-              👑 SUPER ADMIN CONTROL PANEL
+              SUPER ADMIN CONTROL PANEL
             </span>
             <span className="text-xs text-slate-400 font-mono">
-              Denver HQ Central Console
+              Dispatch Operations Console
             </span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-display font-black text-white">
             DGW Platform & Security Administration
           </h1>
           <p className="text-xs text-slate-400 font-mono">
-            Managing DGW Solutions LLC • Saad Altaf (Sole MBR) • EIN 42-4868007
+            Managing DGW Solutions LLC • Dispatching Global World • Owner: Saad Altaf
           </p>
         </div>
 
@@ -285,13 +285,13 @@ export const AdminPanel: React.FC = () => {
                         onChange={(e) => handleChangeUserRole(u.id, e.target.value as UserRole)}
                         className="px-2.5 py-1 rounded-lg bg-slate-950 border border-white/10 text-brand-orange font-mono font-bold text-xs"
                       >
-                        <option value="super-admin">👑 Super Admin</option>
-                        <option value="admin">🛠 Admin</option>
-                        <option value="carrier">🚛 Carrier</option>
-                        <option value="owner-operator">👨‍✈️ Owner Op</option>
-                        <option value="dispatcher">📦 Dispatcher</option>
-                        <option value="broker">🏢 Broker</option>
-                        <option value="standard">👤 Standard</option>
+                        <option value="super-admin">Super Admin</option>
+                        <option value="admin">Admin</option>
+                        <option value="carrier">Carrier</option>
+                        <option value="owner-operator">Owner Op</option>
+                        <option value="dispatcher">Dispatcher</option>
+                        <option value="broker">Broker</option>
+                        <option value="standard">Standard</option>
                       </select>
                     </td>
 
@@ -309,7 +309,7 @@ export const AdminPanel: React.FC = () => {
                             : 'bg-red-950 text-red-400 border border-red-500/40'
                         }`}
                       >
-                        {u.status === 'active' ? '🟢 ACTIVE' : '🔴 SUSPENDED'}
+                        {u.status === 'active' ? 'ACTIVE' : 'SUSPENDED'}
                       </button>
                     </td>
 

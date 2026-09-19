@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, ShieldCheck, FileCheck, PhoneCall, FileText, Eye } from 'lucide-react';
+import { Building2, ShieldCheck, FileCheck, PhoneCall, FileText, Eye, CheckCircle2 } from 'lucide-react';
 import { BrokerCheckTool } from '../components/workflow/BrokerCheckTool';
 import { BrokerContactForm } from '../components/forms/BrokerContactForm';
 import { DocumentModal } from '../components/common/DocumentModal';
@@ -52,8 +52,8 @@ export const BrokersPage: React.FC<BrokersPageProps> = () => {
               <h3 className="text-sm font-display font-bold text-white">{item.title}</h3>
               <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
             </div>
-            <div className="pt-2 border-t border-slate-800 flex items-center gap-1 text-[10px] text-slate-500 font-mono">
-              <span className="text-brand-cyan">✓</span>
+            <div className="pt-2 border-t border-slate-800 flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+              <CheckCircle2 className="w-3.5 h-3.5 text-brand-cyan" />
               <span>VERIFIED WORKFLOW</span>
             </div>
           </div>

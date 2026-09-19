@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   Plus, 
   ShieldCheck, 
-  ArrowRight
+  ArrowRight,
+  X
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { MC_DATABASE_RECORDS } from '../../data/mcDatabase';
@@ -180,8 +181,8 @@ export const BrokerDashboardView: React.FC = () => {
           <div className="w-full max-w-md bg-slate-900 border border-white/15 rounded-3xl p-6 space-y-4 text-xs">
             <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <h3 className="text-base font-bold text-white">Post New Freight Tender</h3>
-              <button onClick={() => setPostModalOpen(false)} className="text-slate-400 hover:text-white">
-                ✕
+              <button onClick={() => setPostModalOpen(false)} className="text-slate-400 hover:text-white p-1">
+                <X className="w-4 h-4" />
               </button>
             </div>
 

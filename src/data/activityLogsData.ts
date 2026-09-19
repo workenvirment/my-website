@@ -6,9 +6,9 @@ export const INITIAL_ACTIVITY_LOGS: ActivityLogItem[] = [
     userId: 'usr-saad-01',
     userName: 'Saad Altaf (Sole Member)',
     userRole: 'super-admin',
-    action: 'System Policy & EIN CP575G Verification Updated',
+    action: 'Platform Dispatch System Policy Updated',
     category: 'admin',
-    details: 'Verified corporate filing with IRS (EIN 42-4868007) and Denver HQ compliance record.',
+    details: 'Verified corporate operations policies and carrier compliance records.',
     ipAddress: '198.51.100.24',
     timestamp: '2026-09-06 15:40:12'
   },

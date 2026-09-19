@@ -37,7 +37,7 @@ export const UserDashboardView: React.FC<UserDashboardViewProps> = ({
             Welcome, {user?.name || 'Logistics Operator'}
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 font-medium">
-            {user?.companyName} • Denver HQ Operations Gateway (EIN 42-4868007)
+            {user?.companyName || 'DGW Solutions LLC'} • Dispatching Global World • Owner: Saad Altaf
           </p>
         </div>
 
@@ -189,12 +189,12 @@ export const UserDashboardView: React.FC<UserDashboardViewProps> = ({
           <div className="space-y-2.5 text-xs text-slate-300">
             <div className="p-2.5 rounded-xl bg-slate-950 border border-white/5 space-y-1">
               <span className="font-bold text-white block">Tender DGW-TN-9942 Approved</span>
-              <p className="text-[11px] text-slate-400">Robert Vance confirmed Dallas ➔ Nashville ($2.94/mi).</p>
+              <p className="text-[11px] text-slate-400">Robert Vance confirmed Dallas to Nashville ($2.94/mi).</p>
             </div>
 
             <div className="p-2.5 rounded-xl bg-slate-950 border border-white/5 space-y-1">
-              <span className="font-bold text-white block">Denver HQ Fleet Dispatch</span>
-              <p className="text-[11px] text-slate-400">Rocky Mtn Express Unit #512 staged for Salt Lake City haul.</p>
+              <span className="font-bold text-white block">Fleet Dispatch Status</span>
+              <p className="text-[11px] text-slate-400">Rocky Mtn Express Unit #512 staged for regional transit.</p>
             </div>
           </div>
         </div>
@@ -206,9 +206,9 @@ export const UserDashboardView: React.FC<UserDashboardViewProps> = ({
           </span>
           <div className="p-3 rounded-2xl bg-slate-950 border border-white/5 space-y-1.5 font-mono text-[11px] text-slate-400">
             <div>ENTITY: <strong className="text-white">DGW SOLUTIONS LLC</strong></div>
-            <div>OWNER: <strong className="text-white">SAAD ALTAF (SOLE MBR)</strong></div>
-            <div>ADDRESS: <strong className="text-white">9057 E 50TH AVE STE 22C, DENVER CO 80238</strong></div>
-            <div>EIN: <strong className="text-brand-orange">42-4868007</strong> (IRS CP575G)</div>
+            <div>DIVISION: <strong className="text-white">DISPATCHING GLOBAL WORLD</strong></div>
+            <div>OWNER: <strong className="text-white">SAAD ALTAF</strong></div>
+            <div>EMAIL: <strong className="text-brand-orange">dispachingglobal@dgwsolutionllc.com</strong></div>
           </div>
         </div>
 

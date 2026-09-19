@@ -1,0 +1,5 @@
+# Robots.txt for DGW Solutions LLC
+User-agent: *
+Allow: /
+
+Sitemap: https://dgwsolutionllc.com/sitemap.xml
