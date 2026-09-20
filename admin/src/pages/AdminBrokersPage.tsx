@@ -2,13 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Building2, 
   Search, 
-  FileSpreadsheet, 
   Plus, 
   Eye, 
   Trash2, 
   X, 
-  ChevronLeft, 
-  ChevronRight, 
   CheckCircle2, 
   ShieldAlert
 } from 'lucide-react';
@@ -23,8 +20,8 @@ export const AdminBrokersPage: React.FC<AdminBrokersPageProps> = () => {
   const [brokers, setBrokers] = useState<Broker[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Pending' | 'Inactive'>('All');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
+  const [currentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Modals
   const [selectedBrokerForView, setSelectedBrokerForView] = useState<Broker | null>(null);
@@ -65,43 +62,39 @@ export const AdminBrokersPage: React.FC<AdminBrokersPageProps> = () => {
         return (
           b.companyName.toLowerCase().includes(q) ||
           b.contact.toLowerCase().includes(q) ||
-          b.phone.toLowerCase().includes(q) ||
-          b.email.toLowerCase().includes(q) ||
-          (b.mcNumber && b.mcNumber.toLowerCase().includes(q))
+          (b.mcNumber && b.mcNumber.toLowerCase().includes(q)) ||
+          b.phone.toLowerCase().includes(q)
         );
       }
       return true;
     });
   }, [brokers, statusFilter, searchTerm]);
 
-  const totalPages = Math.ceil(filteredBrokers.length / itemsPerPage) || 1;
   const paginatedBrokers = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredBrokers.slice(start, start + itemsPerPage);
   }, [filteredBrokers, currentPage, itemsPerPage]);
 
-  const handleAddSubmit = (e: React.FormEvent) => {
+  const handleAddBroker = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newForm.companyName || !newForm.contact || !newForm.phone) {
-      showToast('Company, contact name, and phone are required.');
+    if (!newForm.companyName.trim() || !newForm.phone.trim()) {
+      showToast('Error: Company Name and Phone are required.');
       return;
     }
 
     operationsStore.addBroker({
-      companyName: newForm.companyName,
-      contact: newForm.contact,
-      phone: newForm.phone,
-      email: newForm.email || `${newForm.contact.toLowerCase().replace(/\s+/g, '')}@example.com`,
-      mcNumber: newForm.mcNumber || 'MC-Pending',
-      creditScore: newForm.creditScore,
-      activeLoadsCount: 0,
+      companyName: newForm.companyName.trim(),
+      contact: newForm.contact.trim() || 'Operations Dispatch',
+      phone: newForm.phone.trim(),
+      email: newForm.email.trim(),
+      mcNumber: newForm.mcNumber.trim() || 'MC-Pending',
       status: 'Active',
+      creditScore: newForm.creditScore,
       paymentTerms: newForm.paymentTerms,
-      notes: newForm.notes,
-      avatarInitial: newForm.companyName.substring(0, 2).toUpperCase()
+      notes: newForm.notes.trim()
     });
 
-    showToast(`Broker "${newForm.companyName}" added successfully.`);
+    showToast(`Broker "${newForm.companyName}" added successfully!`);
     setIsAddModalOpen(false);
     setNewForm({
       companyName: '',
@@ -117,317 +110,271 @@ export const AdminBrokersPage: React.FC<AdminBrokersPageProps> = () => {
 
   const handleDeleteConfirm = () => {
     if (!selectedBrokerForDelete) return;
+    const name = selectedBrokerForDelete.companyName;
     operationsStore.deleteBroker(selectedBrokerForDelete.id);
-    showToast(`Broker "${selectedBrokerForDelete.companyName}" removed.`);
+    showToast(`Broker "${name}" removed.`);
     setSelectedBrokerForDelete(null);
-  };
-
-  const exportCSV = () => {
-    const headers = ['Company', 'Contact', 'Phone', 'Email', 'MC Number', 'Credit Score', 'Status'];
-    const rows = filteredBrokers.map((b) => [
-      `"${b.companyName}"`,
-      `"${b.contact}"`,
-      `"${b.phone}"`,
-      `"${b.email}"`,
-      `"${b.mcNumber || ''}"`,
-      `"${b.creditScore || ''}"`,
-      `"${b.status}"`
-    ]);
-    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `dgw_brokers_${new Date().toISOString().slice(0, 10)}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast(`Exported ${filteredBrokers.length} brokers to CSV.`);
   };
 
   return (
     <div className="space-y-4">
-      
-      {/* Toast Alert */}
+      {/* Toast */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-xl bg-[#0D1624] border border-blue-500/40 text-blue-300 text-xs font-semibold shadow-2xl flex items-center gap-3 animate-in fade-in">
+        <div className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-[#0A1322] border border-blue-500/40 text-blue-200 text-xs font-semibold shadow-2xl flex items-center gap-3 animate-fade-in-scale backdrop-blur-md">
           <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
+          <button onClick={() => setToastMessage(null)} className="ml-2 text-slate-400 hover:text-white">
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 rounded-2xl bg-[#0A1322] border border-[#1B293E] shadow-sm">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/15 border border-blue-500/30 text-blue-400 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
             <Building2 className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold font-display text-white">Brokers & Shippers Directory</h1>
-              <span className="px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 text-[10px] font-mono font-bold">
-                {brokers.length} Accounts
+              <h1 className="text-xl font-bold font-display text-white tracking-tight">
+                Freight Broker Network
+              </h1>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold">
+                {brokers.length} Verified
               </span>
             </div>
-            <p className="text-xs text-slate-400">Direct freight shippers, 3PL logistics brokers, payment agreements, and posted lanes.</p>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Direct broker contacts, credit approvals, and freight payment term records.
+            </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={exportCSV}
-            className="px-3 py-2 rounded-xl bg-[#0D1624] hover:bg-[#111C2B] text-slate-200 border border-[#1E2C3F] text-xs font-bold transition-colors flex items-center gap-2 cursor-pointer shadow-xs"
-          >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-            <span>Export CSV</span>
-          </button>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-900/30 flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add New Broker</span>
-          </button>
-        </div>
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-md shadow-emerald-950 cursor-pointer border border-emerald-400/30"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add New Broker</span>
+        </button>
       </div>
 
-      {/* Search & Status Filters */}
-      <div className="p-3 rounded-2xl bg-[#0D1624] border border-[#1E2C3F] grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+      {/* Search & Filter */}
+      <div className="p-3.5 rounded-2xl bg-[#0A1322] border border-[#1B293E] grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
         <div className="sm:col-span-8 relative">
           <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by company name, contact, MC#, phone, email..."
-            className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#07111F] border border-[#1E2C3F] text-white placeholder-slate-500 text-xs focus:outline-none focus:border-blue-500"
+            placeholder="Search broker company, contact, MC#, phone..."
+            className="w-full h-9 pl-9 pr-8 rounded-xl bg-[#08101C] border border-[#1B293E] text-xs text-white placeholder-slate-500 focus:outline-hidden focus:border-emerald-500 transition-colors"
           />
         </div>
 
-        <div className="sm:col-span-4 flex items-center gap-1.5">
-          {(['All', 'Active', 'Pending', 'Inactive'] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatusFilter(s)}
-              className={`flex-1 py-1.5 rounded-xl text-[11px] font-bold transition-all cursor-pointer ${
-                statusFilter === s ? 'bg-blue-600 text-white shadow-xs' : 'bg-[#07111F] border border-[#1E2C3F] text-slate-400 hover:text-white'
-              }`}
-            >
-              {s}
-            </button>
-          ))}
+        <div className="sm:col-span-4">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="w-full h-9 px-3 rounded-xl bg-[#08101C] border border-[#1B293E] text-xs text-slate-200 focus:outline-hidden focus:border-emerald-500"
+          >
+            <option value="All">All Brokers</option>
+            <option value="Active">Active Partnerships</option>
+            <option value="Pending">Pending Verification</option>
+            <option value="Inactive">Inactive</option>
+          </select>
         </div>
       </div>
 
-      {/* Brokers Table */}
-      <div className="rounded-2xl bg-[#0D1624] border border-[#1E2C3F] overflow-hidden shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse font-mono">
-            <thead>
-              <tr className="border-b border-[#1E2C3F] bg-[#07111F]/70 text-slate-400 text-[10px] uppercase tracking-wider">
-                <th className="py-3 px-4 font-bold">Company</th>
-                <th className="py-3 px-4 font-bold">Contact Person</th>
-                <th className="py-3 px-4 font-bold">Phone & Email</th>
-                <th className="py-3 px-4 font-bold">Credit & Rating</th>
-                <th className="py-3 px-4 font-bold">Active Loads</th>
-                <th className="py-3 px-4 font-bold">Status</th>
-                <th className="py-3 px-4 font-bold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#1E2C3F]/40 text-[11px]">
-              {paginatedBrokers.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-500 font-sans">
-                    <Building2 className="w-8 h-8 mx-auto mb-2 text-slate-600 opacity-50" />
-                    <p className="text-sm font-semibold text-slate-400">No broker records found</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Add a new freight broker or shipper partner account to populate this directory.</p>
-                  </td>
-                </tr>
-              ) : (
-                paginatedBrokers.map((b) => (
-                <tr 
-                  key={b.id}
-                  className="hover:bg-[#111C2B] transition-colors group cursor-pointer"
-                  onClick={() => setSelectedBrokerForView(b)}
-                >
-                  <td className="py-3 px-4 font-sans font-bold text-white">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center font-mono font-bold shrink-0 text-xs">
-                        {b.avatarInitial || 'BR'}
-                      </div>
-                      <div className="min-w-0">
-                        <span className="block truncate">{b.companyName}</span>
-                        <span className="text-[10px] text-slate-400 font-mono font-normal block">{b.mcNumber || 'MC-Pending'}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-4 font-sans font-bold text-slate-200">{b.contact}</td>
-                  <td className="py-3 px-4 text-slate-400">
-                    <span className="block text-slate-200">{b.phone}</span>
-                    <span className="text-[10px] text-slate-500 block truncate max-w-[140px]">{b.email}</span>
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className="text-emerald-400 font-bold block">{b.creditScore || '95 (A)'}</span>
-                    <span className="text-[10px] text-slate-500 block">{b.paymentTerms || 'QuickPay / Net 30'}</span>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-blue-400">
-                    {b.activeLoadsCount || 0} Loads
-                  </td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                      b.status === 'Active'
-                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                        : b.status === 'Pending'
-                          ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                          : 'bg-red-500/15 text-red-400 border border-red-500/30'
-                    }`}>
-                      {b.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-end gap-1 text-slate-400">
-                      <button
-                        onClick={() => setSelectedBrokerForView(b)}
-                        className="p-1.5 rounded-lg bg-[#111C2B] hover:bg-[#162438] text-slate-300 hover:text-white border border-[#1E2C3F]"
-                        title="View Broker"
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => setSelectedBrokerForDelete(b)}
-                        className="p-1.5 rounded-lg bg-[#111C2B] hover:bg-red-950/60 text-slate-400 hover:text-red-400 border border-[#1E2C3F]"
-                        title="Delete Broker"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination Bar */}
-        <div className="p-3 border-t border-[#1E2C3F] bg-[#07111F]/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400 font-mono">
-          <div>Showing {filteredBrokers.length} brokers</div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="p-1.5 rounded-lg bg-[#0D1624] border border-[#1E2C3F] disabled:opacity-30 cursor-pointer"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span>Page {currentPage} of {totalPages}</span>
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg bg-[#0D1624] border border-[#1E2C3F] disabled:opacity-30 cursor-pointer"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+      {/* Table */}
+      <div className="rounded-2xl bg-[#0A1322] border border-[#1B293E] shadow-sm overflow-hidden">
+        {filteredBrokers.length === 0 ? (
+          <div className="py-16 text-center space-y-3 font-mono">
+            <Building2 className="w-8 h-8 mx-auto text-slate-600 opacity-40" />
+            <p className="text-sm font-bold font-sans text-white">No brokers found</p>
+            <p className="text-xs text-slate-500 font-sans">Add your first freight broker partner to begin load assignments.</p>
           </div>
-        </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-[#1B293E] bg-[#08101C] text-[10.5px] font-mono uppercase tracking-wider text-slate-400">
+                  <th className="py-3 px-4 font-semibold">Brokerage / Company</th>
+                  <th className="py-3 px-4 font-semibold">MC #</th>
+                  <th className="py-3 px-4 font-semibold">Contact & Phone</th>
+                  <th className="py-3 px-4 font-semibold">Credit / Terms</th>
+                  <th className="py-3 px-4 font-semibold">Status</th>
+                  <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#1B293E]/50 text-xs">
+                {paginatedBrokers.map((b) => (
+                  <tr key={b.id} className="hover:bg-[#0D182A]/80 transition-colors">
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-xl bg-emerald-950/80 border border-emerald-800/40 text-emerald-400 font-bold text-xs flex items-center justify-center shrink-0">
+                          <Building2 className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="font-bold text-white text-xs">{b.companyName}</p>
+                          <span className="text-[11px] text-slate-400">{b.email || 'No email on file'}</span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="py-3.5 px-4 font-mono text-[11px]">
+                      <span className="font-bold text-blue-400 bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-800/40">
+                        {b.mcNumber}
+                      </span>
+                    </td>
+
+                    <td className="py-3.5 px-4">
+                      <div>
+                        <p className="font-semibold text-slate-200">{b.contact}</p>
+                        <a href={`tel:${b.phone}`} className="text-emerald-400 hover:underline font-mono text-[11px]">
+                          {b.phone}
+                        </a>
+                      </div>
+                    </td>
+
+                    <td className="py-3.5 px-4">
+                      <div>
+                        <span className="font-mono text-emerald-400 font-bold text-[11px]">{b.creditScore}</span>
+                        <p className="text-[10px] text-slate-400">{b.paymentTerms}</p>
+                      </div>
+                    </td>
+
+                    <td className="py-3.5 px-4">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        {b.status}
+                      </span>
+                    </td>
+
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => setSelectedBrokerForView(b)}
+                          className="p-1.5 rounded-lg bg-[#08101C] hover:bg-[#111F33] text-slate-400 hover:text-white border border-[#1B293E] cursor-pointer"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => setSelectedBrokerForDelete(b)}
+                          className="p-1.5 rounded-lg bg-[#08101C] hover:bg-red-500/20 text-slate-500 hover:text-red-400 border border-[#1B293E] cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      {/* Add Broker Modal */}
+      {/* MODAL: ADD BROKER */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-[#0D1624] border border-[#1E2C3F] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
-            <div className="flex items-start justify-between border-b border-[#1E2C3F] pb-3">
-              <h3 className="text-lg font-bold font-display text-white">Add New Broker Account</h3>
-              <button onClick={() => setIsAddModalOpen(false)} className="text-slate-400 hover:text-white cursor-pointer">
+        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in-scale">
+          <div className="bg-[#0A1322] border border-[#1B293E] rounded-2xl max-w-xl w-full p-5 space-y-4 shadow-2xl relative">
+            <div className="flex items-start justify-between border-b border-[#1B293E] pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <Plus className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold font-display text-white">Add Broker Partner</h3>
+                  <p className="text-[11px] text-slate-400">Register freight brokerage company profile.</p>
+                </div>
+              </div>
+              <button onClick={() => setIsAddModalOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-[#08101C] border border-[#1B293E]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleAddSubmit} className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-400 font-bold mb-1">Company Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={newForm.companyName}
-                    onChange={(e) => setNewForm({ ...newForm, companyName: e.target.value })}
-                    placeholder="e.g. Apex Freight Brokerage"
-                    className="w-full px-3 py-2 rounded-xl bg-[#07111F] border border-[#1E2C3F] text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 font-bold mb-1">Contact Person *</label>
-                  <input
-                    type="text"
-                    required
-                    value={newForm.contact}
-                    onChange={(e) => setNewForm({ ...newForm, contact: e.target.value })}
-                    placeholder="e.g. Rachel Adams"
-                    className="w-full px-3 py-2 rounded-xl bg-[#07111F] border border-[#1E2C3F] text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
+            <form onSubmit={handleAddBroker} className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label className="block text-[10px] font-mono uppercase text-slate-400 mb-1">Company Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={newForm.companyName}
+                  onChange={(e) => setNewForm({ ...newForm, companyName: e.target.value })}
+                  placeholder="e.g. Apex Freight Logistics"
+                  className="w-full h-9 px-3 rounded-xl bg-[#08101C] border border-[#1B293E] text-white focus:outline-hidden focus:border-emerald-500"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-400 font-bold mb-1">Phone *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={newForm.phone}
-                    onChange={(e) => setNewForm({ ...newForm, phone: e.target.value })}
-                    placeholder="+1 (555) 000-0000"
-                    className="w-full px-3 py-2 rounded-xl bg-[#07111F] border border-[#1E2C3F] text-white focus:outline-none focus:border-blue-500 font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 font-bold mb-1">Email</label>
-                  <input
-                    type="email"
-                    value={newForm.email}
-                    onChange={(e) => setNewForm({ ...newForm, email: e.target.value })}
-                    placeholder="broker@example.com"
-                    className="w-full px-3 py-2 rounded-xl bg-[#07111F] border border-[#1E2C3F] text-white focus:outline-none focus:border-blue-500 font-mono"
-                  />
-                </div>
+              <div>
+                <label className="block text-[10px] font-mono uppercase text-slate-400 mb-1">Primary Contact</label>
+                <input
+                  type="text"
+                  value={newForm.contact}
+                  onChange={(e) => setNewForm({ ...newForm, contact: e.target.value })}
+                  placeholder="e.g. Sarah Jenkins"
+                  className="w-full h-9 px-3 rounded-xl bg-[#08101C] border border-[#1B293E] text-white focus:outline-hidden focus:border-emerald-500"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-400 font-bold mb-1">MC Number</label>
-                  <input
-                    type="text"
-                    value={newForm.mcNumber}
-                    onChange={(e) => setNewForm({ ...newForm, mcNumber: e.target.value })}
-                    placeholder="MC-987654"
-                    className="w-full px-3 py-2 rounded-xl bg-[#07111F] border border-[#1E2C3F] text-white focus:outline-none focus:border-blue-500 font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-400 font-bold mb-1">Credit Score</label>
-                  <input
-                    type="text"
-                    value={newForm.creditScore}
-                    onChange={(e) => setNewForm({ ...newForm, creditScore: e.target.value })}
-                    placeholder="e.g. 96 (A)"
-                    className="w-full px-3 py-2 rounded-xl bg-[#07111F] border border-[#1E2C3F] text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
+              <div>
+                <label className="block text-[10px] font-mono uppercase text-slate-400 mb-1">Phone Number *</label>
+                <input
+                  type="text"
+                  required
+                  value={newForm.phone}
+                  onChange={(e) => setNewForm({ ...newForm, phone: e.target.value })}
+                  placeholder="(555) 123-4567"
+                  className="w-full h-9 px-3 rounded-xl bg-[#08101C] border border-[#1B293E] text-white font-mono focus:outline-hidden focus:border-emerald-500"
+                />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#1E2C3F]">
+              <div>
+                <label className="block text-[10px] font-mono uppercase text-slate-400 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={newForm.email}
+                  onChange={(e) => setNewForm({ ...newForm, email: e.target.value })}
+                  placeholder="dispatch@brokerage.com"
+                  className="w-full h-9 px-3 rounded-xl bg-[#08101C] border border-[#1B293E] text-white focus:outline-hidden focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-mono uppercase text-slate-400 mb-1">MC Number</label>
+                <input
+                  type="text"
+                  value={newForm.mcNumber}
+                  onChange={(e) => setNewForm({ ...newForm, mcNumber: e.target.value })}
+                  placeholder="MC-987654"
+                  className="w-full h-9 px-3 rounded-xl bg-[#08101C] border border-[#1B293E] text-white font-mono focus:outline-hidden focus:border-emerald-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-mono uppercase text-slate-400 mb-1">Credit Rating</label>
+                <input
+                  type="text"
+                  value={newForm.creditScore}
+                  onChange={(e) => setNewForm({ ...newForm, creditScore: e.target.value })}
+                  className="w-full h-9 px-3 rounded-xl bg-[#08101C] border border-[#1B293E] text-white focus:outline-hidden focus:border-emerald-500"
+                />
+              </div>
+
+              <div className="sm:col-span-2 flex items-center justify-end gap-2 pt-2 border-t border-[#1B293E]">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#111C2B] hover:bg-[#162438] text-slate-300 font-bold cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-[#08101C] text-slate-300 font-bold text-xs border border-[#1B293E]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-md shadow-blue-900/30 cursor-pointer"
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-950 flex items-center gap-1.5"
                 >
-                  Save Broker
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Save Broker</span>
                 </button>
               </div>
             </form>
@@ -435,48 +382,44 @@ export const AdminBrokersPage: React.FC<AdminBrokersPageProps> = () => {
         </div>
       )}
 
-      {/* View Broker Modal */}
+      {/* MODAL: VIEW BROKER */}
       {selectedBrokerForView && (
-        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-[#0D1624] border border-[#1E2C3F] rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
-            <div className="flex items-start justify-between border-b border-[#1E2C3F] pb-3">
+        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in-scale">
+          <div className="bg-[#0A1322] border border-[#1B293E] rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl relative">
+            <div className="flex items-start justify-between border-b border-[#1B293E] pb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/15 text-blue-400 font-bold flex items-center justify-center font-mono">
-                  {selectedBrokerForView.avatarInitial || 'BR'}
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center">
+                  <Building2 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold font-display text-white">{selectedBrokerForView.companyName}</h3>
-                  <p className="text-xs text-slate-400">Contact: {selectedBrokerForView.contact}</p>
+                  <h3 className="text-sm font-bold font-display text-white">{selectedBrokerForView.companyName}</h3>
+                  <p className="text-[11px] text-slate-400">{selectedBrokerForView.mcNumber} • {selectedBrokerForView.contact}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedBrokerForView(null)} className="text-slate-400 hover:text-white cursor-pointer">
+              <button onClick={() => setSelectedBrokerForView(null)} className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-[#08101C] border border-[#1B293E]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="p-3 rounded-xl bg-[#07111F] border border-[#1E2C3F]">
-                <span className="text-slate-500 text-[10px] font-mono uppercase block">Phone</span>
-                <span className="font-bold text-white font-mono">{selectedBrokerForView.phone}</span>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Phone</span>
+                <a href={`tel:${selectedBrokerForView.phone}`} className="text-emerald-400 font-bold hover:underline font-mono">{selectedBrokerForView.phone}</a>
               </div>
-              <div className="p-3 rounded-xl bg-[#07111F] border border-[#1E2C3F]">
-                <span className="text-slate-500 text-[10px] font-mono uppercase block">Email</span>
-                <span className="font-bold text-white truncate block">{selectedBrokerForView.email}</span>
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Credit Score</span>
+                <span className="font-bold text-white">{selectedBrokerForView.creditScore}</span>
               </div>
-              <div className="p-3 rounded-xl bg-[#07111F] border border-[#1E2C3F]">
-                <span className="text-slate-500 text-[10px] font-mono uppercase block">Credit Score</span>
-                <span className="font-bold text-emerald-400">{selectedBrokerForView.creditScore}</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#07111F] border border-[#1E2C3F]">
-                <span className="text-slate-500 text-[10px] font-mono uppercase block">Payment Terms</span>
+              <div className="col-span-2 p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Payment Terms</span>
                 <span className="font-bold text-white">{selectedBrokerForView.paymentTerms}</span>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#1E2C3F]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#1B293E]">
               <button
                 onClick={() => setSelectedBrokerForView(null)}
-                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#08101C] text-slate-300 font-bold text-xs border border-[#1B293E]"
               >
                 Close
               </button>
@@ -485,35 +428,42 @@ export const AdminBrokersPage: React.FC<AdminBrokersPageProps> = () => {
         </div>
       )}
 
-      {/* Delete Broker Modal */}
+      {/* MODAL: DELETE BROKER */}
       {selectedBrokerForDelete && (
-        <div className="fixed inset-0 z-50 bg-[#030812]/85 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-[#0D1624] border border-red-500/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl relative text-center">
-            <div className="w-12 h-12 rounded-xl bg-red-500/15 border border-red-500/25 text-red-400 flex items-center justify-center mx-auto">
-              <ShieldAlert className="w-6 h-6" />
+        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in-scale">
+          <div className="bg-[#0A1322] border border-red-500/40 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl relative">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center shrink-0">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold font-display text-white">Remove Broker</h3>
+                <p className="text-[11px] text-slate-400">Permanently delete broker partner record.</p>
+              </div>
             </div>
-            <h3 className="text-base font-bold font-display text-white">Remove Broker Account</h3>
-            <p className="text-xs text-slate-400">
-              Are you sure you want to remove <strong className="text-white">{selectedBrokerForDelete.companyName}</strong>?
+
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Are you sure you want to remove <strong className="text-white">"{selectedBrokerForDelete.companyName}"</strong>?
             </p>
-            <div className="grid grid-cols-2 gap-2 pt-2">
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#1B293E]">
               <button
                 onClick={() => setSelectedBrokerForDelete(null)}
-                className="py-2 rounded-xl bg-[#111C2B] border border-[#1E2C3F] text-slate-300 font-bold text-xs cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#08101C] text-slate-300 font-bold text-xs border border-[#1B293E]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteConfirm}
-                className="py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs cursor-pointer shadow-lg shadow-red-900/30"
+                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-md shadow-red-950 flex items-center gap-1.5"
               >
-                Delete Account
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete Broker</span>
               </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };

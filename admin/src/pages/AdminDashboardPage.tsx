@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Truck, 
-  Building2, 
-  FileText, 
   Mail, 
+  Users, 
+  ShieldCheck, 
+  ArrowRight, 
+  Clock, 
+  Sparkles, 
+  Layers, 
+  ChevronRight, 
   Package, 
-  ArrowUpRight, 
-  Phone, 
-  MessageSquare, 
-  MoreVertical, 
-  Maximize2, 
-  Check,
-  Plus
+  Activity, 
+  Check 
 } from 'lucide-react';
 import { operationsStore } from '../services/operationsStore';
-import { subscribeToTruckers, subscribeToContactMessages } from '../services/firestoreService';
+import { 
+  subscribeToTruckers, 
+  subscribeToContactMessages, 
+  subscribeToCarrierLeads, 
+  formatFirestoreDate 
+} from '../services/firestoreService';
 import type { 
   Trucker, 
-  TruckerDoc,
-  Broker, 
-  Load, 
-  MessageThread, 
+  TruckerDoc, 
   OperationTask, 
-  SystemNotification,
-  ContactMessageDoc
+  ContactMessageDoc, 
+  CarrierLeadDoc 
 } from '../types/admin';
 
 interface AdminDashboardPageProps {
@@ -31,20 +33,15 @@ interface AdminDashboardPageProps {
 }
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNavigate }) => {
-  // Operational state
+  // Real-time Firestore state
+  const [leads, setLeads] = useState<CarrierLeadDoc[]>([]);
   const [truckers, setTruckers] = useState<Trucker[]>([]);
-  const [brokers, setBrokers] = useState<Broker[]>([]);
-  const [loads, setLoads] = useState<Load[]>([]);
-  const [messageThreads, setMessageThreads] = useState<MessageThread[]>([]);
+  const [messages, setMessages] = useState<ContactMessageDoc[]>([]);
   const [tasks, setTasks] = useState<OperationTask[]>([]);
-  const [notifications, setNotifications] = useState<SystemNotification[]>([]);
 
-  // Chart time range
-  const [timeRange, setTimeRange] = useState<'7d' | '30d' | '3m' | '1y'>('7d');
-  const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; date: string; loads: number; truckers: number } | null>(null);
-
-  // Selected Trucker for Drawer Profile Modal
+  // Selected Trucker / Lead for Quick View Modal
   const [selectedTrucker, setSelectedTrucker] = useState<Trucker | null>(null);
+  const [selectedLead, setSelectedLead] = useState<CarrierLeadDoc | null>(null);
 
   // Live clock
   const [currentTime, setCurrentTime] = useState<string>('');
@@ -57,9 +54,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           month: 'short',
           day: '2-digit',
           year: 'numeric'
-        }) + '  ' + now.toLocaleTimeString('en-US', {
+        }) + ' • ' + now.toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
+          second: '2-digit',
           hour12: true
         })
       );
@@ -69,31 +67,36 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
     return () => clearInterval(timer);
   }, []);
 
-  // Load and sync store data
+  // Load and sync real Firestore data
   useEffect(() => {
-    const syncData = () => {
+    const syncStore = () => {
       setTruckers(operationsStore.getTruckers());
-      setBrokers(operationsStore.getBrokers());
-      setLoads(operationsStore.getLoads());
-      setMessageThreads(operationsStore.getMessageThreads());
       setTasks(operationsStore.getTasks());
-      setNotifications(operationsStore.getNotifications());
     };
 
-    syncData();
-    const unsubStore = operationsStore.subscribe(syncData);
+    syncStore();
+    const unsubStore = operationsStore.subscribe(syncStore);
 
-    // Sync real Firestore truckers and messages
-    const unsubTruckers = subscribeToTruckers((truckersList: TruckerDoc[]) => {
-      operationsStore.syncFirestoreTruckers(truckersList);
+    // Sync real Firestore carrier leads
+    const unsubLeads = subscribeToCarrierLeads((leadsList) => {
+      setLeads(leadsList);
     });
 
+    // Sync real Firestore truckers
+    const unsubTruckers = subscribeToTruckers((truckersList: TruckerDoc[]) => {
+      operationsStore.syncFirestoreTruckers(truckersList);
+      setTruckers(operationsStore.getTruckers());
+    });
+
+    // Sync real Firestore messages
     const unsubMessages = subscribeToContactMessages((msgs: ContactMessageDoc[]) => {
       operationsStore.syncFirestoreMessages(msgs);
+      setMessages(msgs);
     });
 
     return () => {
       unsubStore();
+      unsubLeads();
       unsubTruckers();
       unsubMessages();
     };
@@ -109,1119 +112,655 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
     }
   };
 
-  // Computed dynamic metrics
+  // Real Metrics Calculation from Firestore
+  const totalLeads = leads.length;
+  const newLeadsCount = leads.filter((l) => l.status === 'new').length;
+  const inReviewLeadsCount = leads.filter((l) => l.status === 'in_review').length;
+  const contactedLeadsCount = leads.filter((l) => l.status === 'contacted').length;
+  const onboardedLeadsCount = leads.filter((l) => l.status === 'onboarded').length;
+
   const totalTruckers = truckers.length;
   const activeTruckers = truckers.filter((t) => t.status === 'Active').length;
-  const pendingTruckers = truckers.filter((t) => t.status === 'Pending').length;
-  const inactiveTruckers = truckers.filter((t) => t.status === 'Inactive').length;
+  const unreadMessagesCount = messages.filter((m) => m.status === 'unread').length;
 
-  const activePct = totalTruckers > 0 ? Math.round((activeTruckers / totalTruckers) * 100) : 0;
-  const pendingPct = totalTruckers > 0 ? Math.round((pendingTruckers / totalTruckers) * 100) : 0;
-  const inactivePct = totalTruckers > 0 ? Math.max(0, 100 - activePct - pendingPct) : 0;
-
-  const totalBrokers = brokers.length;
-  const totalMC = truckers.filter((t) => t.mcNumber && t.mcNumber !== 'MC-Pending').length + 
-                  brokers.filter((b) => b.mcNumber).length;
-  const unreadMessagesCount = messageThreads.reduce((acc, t) => acc + (t.unreadCount || 0), 0);
-  const activeLoadsCount = loads.filter((l) => l.status !== 'Delivered' && l.status !== 'Cancelled').length;
-
-  // Chart datasets depending on range (scaling dynamically with actual loads and truckers)
-  const chartDatasets = {
-    '7d': [
-      { date: 'Sep 14', loads: loads.length, truckers: totalTruckers, x: 30 },
-      { date: 'Sep 15', loads: loads.length, truckers: totalTruckers, x: 130 },
-      { date: 'Sep 16', loads: loads.length, truckers: totalTruckers, x: 230 },
-      { date: 'Sep 17', loads: loads.length, truckers: totalTruckers, x: 330 },
-      { date: 'Sep 18', loads: loads.length, truckers: totalTruckers, x: 430 },
-      { date: 'Sep 19', loads: loads.length, truckers: totalTruckers, x: 530 },
-      { date: 'Sep 20', loads: loads.length, truckers: totalTruckers, x: 630 }
-    ],
-    '30d': [
-      { date: 'Aug 22', loads: loads.length, truckers: totalTruckers, x: 30 },
-      { date: 'Aug 29', loads: loads.length, truckers: totalTruckers, x: 130 },
-      { date: 'Sep 05', loads: loads.length, truckers: totalTruckers, x: 230 },
-      { date: 'Sep 12', loads: loads.length, truckers: totalTruckers, x: 330 },
-      { date: 'Sep 19', loads: loads.length, truckers: totalTruckers, x: 430 },
-      { date: 'Sep 20', loads: loads.length, truckers: totalTruckers, x: 630 }
-    ],
-    '3m': [
-      { date: 'July', loads: loads.length, truckers: totalTruckers, x: 30 },
-      { date: 'August', loads: loads.length, truckers: totalTruckers, x: 230 },
-      { date: 'September', loads: loads.length, truckers: totalTruckers, x: 430 },
-      { date: 'Current', loads: loads.length, truckers: totalTruckers, x: 630 }
-    ],
-    '1y': [
-      { date: 'Q1', loads: loads.length, truckers: totalTruckers, x: 30 },
-      { date: 'Q2', loads: loads.length, truckers: totalTruckers, x: 230 },
-      { date: 'Q3', loads: loads.length, truckers: totalTruckers, x: 430 },
-      { date: 'Q4', loads: loads.length, truckers: totalTruckers, x: 630 }
-    ]
-  };
-
-  const activeChartData = chartDatasets[timeRange] || chartDatasets['7d'];
-  const hasActivityData = loads.length > 0 || totalTruckers > 0;
+  const verifiedMCNumbersCount = 
+    truckers.filter((t) => t.mcNumber && t.mcNumber !== 'MC-Pending').length + 
+    leads.filter((l) => l.mcNumber && l.mcNumber.trim() !== '').length;
 
   return (
-    <div className="space-y-3 pb-6">
+    <div className="space-y-4">
       
-      {/* ==================================================================== */}
-      {/* 1. HERO BANNER (Full width, ~128px height, subtle truck background)   */}
-      {/* ==================================================================== */}
-      <div className="relative rounded-xl overflow-hidden border border-[#14233D] bg-[#07111F] shadow-lg h-[130px] flex items-center">
-        {/* Background Semi-Truck Highway Image with Gradient Shading */}
-        <div 
-          className="absolute inset-0 bg-cover bg-right bg-no-repeat opacity-60 pointer-events-none"
-          style={{ backgroundImage: `url('/hero-semi-truck.jpg')` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#07101E] via-[#07101E]/85 to-transparent pointer-events-none" />
+      {/* 1. Dashboard Header */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 rounded-2xl bg-gradient-to-r from-[#0A1322] via-[#0D182A] to-[#0A1322] border border-[#1B293E] shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-600 via-sky-400 to-amber-500 opacity-80" />
 
-        {/* Hero Content Overlay */}
-        <div className="relative z-10 px-5 sm:px-6 w-full flex items-center justify-between">
-          <div className="space-y-1 max-w-lg">
-            <h1 className="text-[23px] sm:text-[25px] font-display font-bold text-white tracking-tight leading-tight">
-              Welcome Back, Admin
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-black font-display text-white tracking-tight">
+              DGW Operations Center
             </h1>
-            <p className="text-[11.5px] text-slate-300 leading-normal font-normal">
-              Manage your network, communicate with truckers, track activity and keep your operations moving.
-            </p>
-            {/* Subtle blue accent line */}
-            <div className="w-12 h-[2.5px] bg-blue-500 rounded-full mt-2" />
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-emerald-400 text-[10px] font-mono font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>System Online</span>
+            </div>
+          </div>
+          <p className="text-xs text-slate-400">
+            Monitor leads, carriers, onboarding activity, and logistics operations from one place.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+          <div className="px-3 py-1.5 rounded-xl bg-[#08101C] border border-[#1B293E] text-slate-300 flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5 text-blue-400" />
+            <span className="text-[11px] font-semibold">{currentTime || 'Loading clock...'}</span>
           </div>
 
-          <div className="hidden md:block text-right pr-4">
-            <div className="space-y-0.5 font-display font-black text-[11px] tracking-wider uppercase">
-              <p className="text-white">More Loads</p>
-              <p className="text-blue-400">More Miles</p>
-              <p className="text-slate-300">More Success</p>
+          <button
+            onClick={() => handleNavigate('/leads')}
+            className="px-3 py-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/30 font-bold transition-colors cursor-pointer flex items-center gap-1.5"
+          >
+            <Users className="w-3.5 h-3.5" />
+            <span>Carrier Leads ({totalLeads})</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 2. Premium Semi-Truck Visual Banner */}
+      <div className="relative rounded-2xl overflow-hidden border border-[#1E2E46] shadow-2xl group min-h-[160px] sm:min-h-[190px] flex items-center">
+        <img 
+          src="/hero-semi-truck.jpg" 
+          alt="DGW Logistics Fleet Highway" 
+          className="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#07111F] via-[#07111F]/90 to-[#07111F]/50" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#07111F]/90 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-blue-950/20 mix-blend-multiply" />
+
+        <div className="relative z-10 p-5 sm:p-7 max-w-2xl space-y-2.5">
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 backdrop-blur-md text-blue-300 text-[10px] font-mono font-bold uppercase tracking-wider">
+            <Sparkles className="w-3 h-3 text-amber-400" />
+            <span>Operations & Dispatch Infrastructure</span>
+          </div>
+
+          <div>
+            <h2 className="text-xl sm:text-3xl font-black font-display text-white tracking-tight drop-shadow-md">
+              Move More. Operate Smarter.
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium drop-shadow-sm mt-1">
+              DGW Solutions logistics operations platform.
+            </p>
+          </div>
+
+          <div className="pt-1 flex items-center gap-3">
+            <button
+              onClick={() => handleNavigate('/leads')}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold text-xs shadow-lg shadow-blue-900/50 flex items-center gap-2 transition-all cursor-pointer border border-blue-400/40 transform hover:-translate-y-0.5"
+            >
+              <span>View Operations</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+
+            <button
+              onClick={() => handleNavigate('/truckers')}
+              className="px-4 py-2 rounded-xl bg-[#0A1322]/80 hover:bg-[#0E1A2E] text-slate-200 font-bold text-xs border border-[#1E2E46] backdrop-blur-md transition-all cursor-pointer"
+            >
+              Manage Fleet
+            </button>
+          </div>
+        </div>
+
+        <div className="absolute right-6 bottom-4 hidden lg:block opacity-20 pointer-events-none">
+          <span className="text-6xl font-black font-display text-white tracking-tighter">DGW</span>
+        </div>
+      </div>
+
+      {/* 3. KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        {/* KPI 1 */}
+        <div 
+          onClick={() => handleNavigate('/leads')}
+          className="glass-card p-3.5 rounded-2xl cursor-pointer flex flex-col justify-between h-[124px] relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-xl bg-blue-600/15 border border-blue-500/30 text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Users className="w-4 h-4" />
             </div>
+            {newLeadsCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[9.5px] font-mono font-bold animate-pulse">
+                +{newLeadsCount} New
+              </span>
+            )}
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] font-medium block">Total Leads</span>
+            <span className="text-2xl font-black text-white font-display leading-tight">{totalLeads}</span>
+          </div>
+          <div className="flex items-center justify-between text-[9.5px] font-mono text-slate-500">
+            <span>Inquiries stream</span>
+            <span className="text-blue-400 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+          </div>
+        </div>
+
+        {/* KPI 2 */}
+        <div 
+          onClick={() => handleNavigate('/leads')}
+          className="glass-card p-3.5 rounded-2xl cursor-pointer flex flex-col justify-between h-[124px] relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Sparkles className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-mono font-bold text-emerald-400">
+              Pipeline
+            </span>
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] font-medium block">New Inquiries</span>
+            <span className="text-2xl font-black text-emerald-400 font-display leading-tight">{newLeadsCount}</span>
+          </div>
+          <div className="flex items-center justify-between text-[9.5px] font-mono text-slate-500">
+            <span>{newLeadsCount > 0 ? 'Requires action' : 'All processed'}</span>
+            <span className="text-emerald-400 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+          </div>
+        </div>
+
+        {/* KPI 3 */}
+        <div 
+          onClick={() => handleNavigate('/truckers')}
+          className="glass-card p-3.5 rounded-2xl cursor-pointer flex flex-col justify-between h-[124px] relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Truck className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-mono font-bold text-amber-400">
+              {activeTruckers} Active
+            </span>
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] font-medium block">Total Truckers</span>
+            <span className="text-2xl font-black text-white font-display leading-tight">{totalTruckers}</span>
+          </div>
+          <div className="flex items-center justify-between text-[9.5px] font-mono text-slate-500">
+            <span>Fleet database</span>
+            <span className="text-amber-400 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+          </div>
+        </div>
+
+        {/* KPI 4 */}
+        <div 
+          onClick={() => handleNavigate('/messages')}
+          className="glass-card p-3.5 rounded-2xl cursor-pointer flex flex-col justify-between h-[124px] relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Mail className="w-4 h-4" />
+            </div>
+            {unreadMessagesCount > 0 && (
+              <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/40 text-[9.5px] font-mono font-bold animate-pulse">
+                {unreadMessagesCount} Unread
+              </span>
+            )}
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] font-medium block">Messages</span>
+            <span className="text-2xl font-black text-white font-display leading-tight">{messages.length}</span>
+          </div>
+          <div className="flex items-center justify-between text-[9.5px] font-mono text-slate-500">
+            <span>{unreadMessagesCount > 0 ? 'Action required' : 'Inbox caught up'}</span>
+            <span className="text-purple-400 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+          </div>
+        </div>
+
+        {/* KPI 5 */}
+        <div 
+          onClick={() => handleNavigate('/mc-lookup')}
+          className="col-span-2 sm:col-span-1 glass-card p-3.5 rounded-2xl cursor-pointer flex flex-col justify-between h-[124px] relative overflow-hidden group"
+        >
+          <div className="flex items-center justify-between">
+            <div className="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-mono font-bold text-sky-400">
+              USDOT / MC
+            </span>
+          </div>
+          <div>
+            <span className="text-slate-400 text-[11px] font-medium block">MC Numbers</span>
+            <span className="text-2xl font-black text-white font-display leading-tight">{verifiedMCNumbersCount}</span>
+          </div>
+          <div className="flex items-center justify-between text-[9.5px] font-mono text-slate-500">
+            <span>Registry records</span>
+            <span className="text-sky-400 group-hover:translate-x-0.5 transition-transform">&rarr;</span>
           </div>
         </div>
       </div>
 
-      {/* ==================================================================== */}
-      {/* 2. MAIN WORKSPACE GRID (LEFT: 78% / RIGHT: 22%)                     */}
-      {/* ==================================================================== */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-        
-        {/* ================================================================== */}
-        {/* LEFT COLUMN: KPIS, ACTIVITY, MAP, TABLES, STATS (9 Columns / ~78%) */}
-        {/* ================================================================== */}
-        <div className="lg:col-span-9 space-y-3">
-          
-          {/* A. Top 5 KPI Cards in ONE Horizontal Row */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
-            
-            {/* Card 1: Total Truckers (Live Count) */}
-            <div 
-              onClick={() => handleNavigate('/truckers')}
-              className="p-3 rounded-xl bg-[#091322] border border-[#14233D] hover:border-blue-500/40 transition-all cursor-pointer shadow-xs group h-[112px] flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center">
-                  <Truck className="w-3.5 h-3.5" />
-                </div>
-                <span className={`text-[10.5px] font-mono font-bold flex items-center gap-0.5 ${totalTruckers > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  {totalTruckers > 0 ? <><ArrowUpRight className="w-3 h-3" /> Live</> : '0%'}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 text-[10.5px] font-medium block">Total Truckers</span>
-                <span className="text-[21px] font-black text-white font-display leading-tight">{totalTruckers}</span>
-              </div>
-              <span className="text-[9px] text-slate-500 font-mono block">
-                {totalTruckers > 0 ? `${activeTruckers} active in network` : '0 in network'}
-              </span>
-            </div>
-
-            {/* Card 2: Total Brokers */}
-            <div 
-              onClick={() => handleNavigate('/brokers')}
-              className="p-3 rounded-xl bg-[#091322] border border-[#14233D] hover:border-blue-500/40 transition-all cursor-pointer shadow-xs group h-[112px] flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center">
-                  <Building2 className="w-3.5 h-3.5" />
-                </div>
-                <span className={`text-[10.5px] font-mono font-bold flex items-center gap-0.5 ${totalBrokers > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  {totalBrokers > 0 ? <><ArrowUpRight className="w-3 h-3" /> +8%</> : '0%'}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 text-[10.5px] font-medium block">Total Brokers</span>
-                <span className="text-[21px] font-black text-white font-display leading-tight">{totalBrokers}</span>
-              </div>
-              <span className="text-[9px] text-slate-500 font-mono block">
-                {totalBrokers > 0 ? 'Active in network' : '0 registered'}
-              </span>
-            </div>
-
-            {/* Card 3: Total MC Numbers */}
-            <div 
-              onClick={() => handleNavigate('/mc-lookup')}
-              className="p-3 rounded-xl bg-[#091322] border border-[#14233D] hover:border-blue-500/40 transition-all cursor-pointer shadow-xs group h-[112px] flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                  <FileText className="w-3.5 h-3.5" />
-                </div>
-                <span className={`text-[10.5px] font-mono font-bold flex items-center gap-0.5 ${totalMC > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  {totalMC > 0 ? <><ArrowUpRight className="w-3 h-3" /> +15%</> : '0%'}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 text-[10.5px] font-medium block">Total MC Numbers</span>
-                <span className="text-[21px] font-black text-white font-display leading-tight">{totalMC}</span>
-              </div>
-              <span className="text-[9px] text-slate-500 font-mono block">
-                {totalMC > 0 ? 'Verified in registry' : '0 in database'}
-              </span>
-            </div>
-
-            {/* Card 4: Unread Messages */}
-            <div 
-              onClick={() => handleNavigate('/messages')}
-              className="p-3 rounded-xl bg-[#091322] border border-[#14233D] hover:border-purple-500/40 transition-all cursor-pointer shadow-xs group h-[112px] flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
-                  <Mail className="w-3.5 h-3.5" />
-                </div>
-                <span className={`text-[10.5px] font-mono font-bold flex items-center gap-0.5 ${unreadMessagesCount > 0 ? 'text-red-400' : 'text-slate-500'}`}>
-                  {unreadMessagesCount > 0 ? <><ArrowUpRight className="w-3 h-3" /> {unreadMessagesCount}</> : '0'}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 text-[10.5px] font-medium block">Unread Messages</span>
-                <span className="text-[21px] font-black text-white font-display leading-tight">{unreadMessagesCount}</span>
-              </div>
-              <span className="text-[9px] text-slate-500 font-mono block">
-                {unreadMessagesCount > 0 ? 'Requires attention' : 'All caught up'}
-              </span>
-            </div>
-
-            {/* Card 5: Active Loads */}
-            <div 
-              onClick={() => handleNavigate('/loads')}
-              className="col-span-2 sm:col-span-1 p-3 rounded-xl bg-[#091322] border border-[#14233D] hover:border-blue-500/40 transition-all cursor-pointer shadow-xs group h-[112px] flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between">
-                <div className="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center">
-                  <Package className="w-3.5 h-3.5" />
-                </div>
-                <span className={`text-[10.5px] font-mono font-bold flex items-center gap-0.5 ${activeLoadsCount > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                  {activeLoadsCount > 0 ? <><ArrowUpRight className="w-3 h-3" /> +11%</> : '0%'}
-                </span>
-              </div>
-              <div>
-                <span className="text-slate-400 text-[10.5px] font-medium block">Active Loads</span>
-                <span className="text-[21px] font-black text-white font-display leading-tight">{activeLoadsCount}</span>
-              </div>
-              <span className="text-[9px] text-slate-500 font-mono block">
-                {activeLoadsCount > 0 ? 'Open & assigned' : '0 posted'}
-              </span>
-            </div>
-
+      {/* 4. Lead Pipeline Progression */}
+      <div className="p-4 rounded-2xl bg-[#0A1322] border border-[#1B293E] space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#1B293E] pb-3">
+          <div>
+            <h3 className="text-sm font-bold font-display text-white flex items-center gap-2">
+              <Layers className="w-4 h-4 text-blue-400" />
+              <span>Lead Pipeline Progression</span>
+            </h3>
+            <p className="text-[11px] text-slate-400">Real-time status of all carrier inquiries submitted through the platform.</p>
           </div>
-
-          {/* B. Operational Row 1: Trucking Activity Overview Chart & Active Truckers Location Map */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5">
-            
-            {/* Trucking Activity Overview Chart (approx 58% width / 7 cols) */}
-            <div className="md:col-span-7 p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs flex flex-col justify-between">
-              
-              {/* Chart Header */}
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <div>
-                  <h3 className="text-[13px] font-bold font-display text-white">
-                    Trucking Activity Overview
-                  </h3>
-                  <div className="flex items-center gap-3 text-[10px] font-mono text-slate-400 mt-0.5">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-blue-500" />
-                      Loads ({loads.length})
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                      Truckers ({totalTruckers})
-                    </span>
-                  </div>
-                </div>
-
-                {/* Time Range Pills */}
-                <div className="flex items-center p-0.5 rounded-md bg-[#060D18] border border-[#14233D] text-[9.5px] font-mono">
-                  {(['7d', '30d', '3m', '1y'] as const).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setTimeRange(t)}
-                      className={`px-2 py-0.5 rounded transition-all cursor-pointer ${
-                        timeRange === t ? 'bg-blue-600 text-white font-bold shadow-xs' : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {t === '7d' ? '7 Days' : t === '30d' ? '30 Days' : t === '3m' ? '3 Months' : '1 Year'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Interactive SVG Dual Curve Chart */}
-              <div className="relative h-44 w-full mt-1 select-none flex items-center justify-center">
-                <svg viewBox="0 0 650 190" className="w-full h-full overflow-visible">
-                  <defs>
-                    <linearGradient id="loadsGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.30" />
-                      <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.0" />
-                    </linearGradient>
-                    <linearGradient id="truckersGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10B981" stopOpacity="0.20" />
-                      <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Horizontal Grid lines */}
-                  {[35, 70, 105, 140, 175].map((y) => (
-                    <line key={y} x1="30" y1={y} x2="640" y2={y} stroke="#14233D" strokeDasharray="2 2" strokeWidth="1" />
-                  ))}
-
-                  {/* Y-axis Labels */}
-                  <text x="5" y="40" fill="#64748B" fontSize="9" fontFamily="monospace">500</text>
-                  <text x="5" y="75" fill="#64748B" fontSize="9" fontFamily="monospace">400</text>
-                  <text x="5" y="110" fill="#64748B" fontSize="9" fontFamily="monospace">300</text>
-                  <text x="5" y="145" fill="#64748B" fontSize="9" fontFamily="monospace">200</text>
-                  <text x="5" y="178" fill="#64748B" fontSize="9" fontFamily="monospace">0</text>
-
-                  {/* Baseline / Active Curves */}
-                  {hasActivityData ? (
-                    <>
-                      <path
-                        d={`M 30 175 L 30 ${175 - activeChartData[0].loads * 0.35} Q 130 ${175 - activeChartData[1].loads * 0.35}, 230 ${175 - activeChartData[2].loads * 0.35} T 430 ${175 - (activeChartData[4]?.loads || 0) * 0.35} T 630 ${175 - activeChartData[activeChartData.length - 1].loads * 0.35} L 630 175 Z`}
-                        fill="url(#loadsGradient)"
-                      />
-                      <path
-                        d={`M 30 ${175 - activeChartData[0].loads * 0.35} Q 130 ${175 - activeChartData[1].loads * 0.35}, 230 ${175 - activeChartData[2].loads * 0.35} T 430 ${175 - (activeChartData[4]?.loads || 0) * 0.35} T 630 ${175 - activeChartData[activeChartData.length - 1].loads * 0.35}`}
-                        fill="none"
-                        stroke="#3B82F6"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d={`M 30 ${175 - activeChartData[0].truckers * 0.35} Q 130 ${175 - activeChartData[1].truckers * 0.35}, 230 ${175 - activeChartData[2].truckers * 0.35} T 430 ${175 - (activeChartData[4]?.truckers || 0) * 0.35} T 630 ${175 - activeChartData[activeChartData.length - 1].truckers * 0.35}`}
-                        fill="none"
-                        stroke="#10B981"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </>
-                  ) : (
-                    <line x1="30" y1="175" x2="630" y2="175" stroke="#1E3A8A" strokeWidth="2" strokeDasharray="4 4" />
-                  )}
-
-                  {/* Data Points */}
-                  {activeChartData.map((pt, idx) => (
-                    <g key={idx} className="cursor-pointer" onClick={() => setHoveredPoint({ x: pt.x, y: 175 - pt.loads * 0.35, date: pt.date, loads: pt.loads, truckers: pt.truckers })}>
-                      <circle cx={pt.x} cy={175 - pt.loads * 0.35} r="3" fill="#3B82F6" stroke="#07111F" strokeWidth="1.5" />
-                      <circle cx={pt.x} cy={175 - pt.truckers * 0.35} r="2.5" fill="#10B981" stroke="#07111F" strokeWidth="1.5" />
-                      {/* X-axis label */}
-                      <text x={pt.x - 14} y="188" fill="#64748B" fontSize="8.5" fontFamily="monospace">{pt.date}</text>
-                    </g>
-                  ))}
-                </svg>
-
-                {!hasActivityData && (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="px-3 py-1 rounded-full bg-[#060D18]/90 border border-[#14233D] text-[10px] font-mono text-slate-400">
-                      Awaiting operational activity to generate trend charts
-                    </span>
-                  </div>
-                )}
-
-                {/* Tooltip Card */}
-                {hoveredPoint && (
-                  <div 
-                    className="absolute p-2 rounded-lg bg-[#060D18] border border-[#14233D] shadow-xl text-[10px] font-mono pointer-events-none z-10 transition-all duration-150"
-                    style={{ left: `${Math.min(hoveredPoint.x * 0.75, 340)}px`, top: '10px' }}
-                  >
-                    <p className="text-slate-400 font-bold border-b border-[#14233D] pb-0.5 mb-1">{hoveredPoint.date}</p>
-                    <div className="flex items-center justify-between gap-3 text-blue-400">
-                      <span>● Loads</span>
-                      <strong className="text-white">{hoveredPoint.loads}</strong>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 text-emerald-400 mt-0.5">
-                      <span>● Truckers</span>
-                      <strong className="text-white">{hoveredPoint.truckers}</strong>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-            </div>
-
-            {/* Active Truckers Location US Map (approx 42% width / 5 cols) */}
-            <div className="md:col-span-5 p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs flex flex-col justify-between relative">
-              
-              <div className="flex items-center justify-between mb-1.5">
-                <h3 className="text-[13px] font-bold font-display text-white">Active Truckers Location</h3>
-                <div className="flex items-center gap-1.5">
-                  <span className={`px-1.5 py-0.2 rounded-full border text-[9.5px] font-mono font-bold flex items-center gap-1 ${
-                    activeTruckers > 0 
-                      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' 
-                      : 'bg-slate-800/40 text-slate-400 border-slate-700/40'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${activeTruckers > 0 ? 'bg-emerald-400 animate-pulse' : 'bg-slate-500'}`} />
-                    {activeTruckers > 0 ? 'Live' : 'Standby'}
-                  </span>
-                  <button className="text-slate-500 hover:text-white transition-colors" title="Expand Map">
-                    <Maximize2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Dark US Map Vector */}
-              <div className="relative h-36 w-full flex items-center justify-center my-0.5">
-                <svg viewBox="0 0 300 160" className="w-full h-full opacity-65">
-                  {/* Stylized US Outline Path */}
-                  <path
-                    d="M 20 38 L 40 28 L 70 30 L 110 24 L 170 28 L 220 32 L 260 24 L 280 42 L 270 65 L 250 85 L 260 115 L 220 135 L 190 120 L 160 148 L 120 138 L 90 134 L 40 115 L 20 75 Z"
-                    fill="#0A1526"
-                    stroke="#14233D"
-                    strokeWidth="1.2"
-                  />
-                  {/* Subtle state gridlines */}
-                  <path d="M 70 30 L 90 134 M 170 28 L 160 148 M 40 75 L 260 65 M 110 85 L 220 85" stroke="#14233D" strokeWidth="0.7" strokeDasharray="2 2" fill="none" />
-                </svg>
-
-                {totalTruckers > 0 ? (
-                  <>
-                    <div className="absolute top-9 left-11 group cursor-pointer" title="Active Carrier - Chicago, IL">
-                      <span className="w-2.5 h-2.5 rounded-full bg-blue-500 block animate-ping absolute" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-blue-400 border border-[#07111F] block relative shadow-sm shadow-blue-500" />
-                    </div>
-                    <div className="absolute top-15 left-26 group cursor-pointer" title="Active Carrier - Atlanta, GA">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 block animate-ping absolute" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 border border-[#07111F] block relative shadow-sm shadow-emerald-500" />
-                    </div>
-                  </>
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <span className="px-2.5 py-1 rounded-full bg-[#060D18]/90 border border-[#14233D] text-[10px] font-mono text-slate-400">
-                      0 GPS units currently active
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Status Breakdown Bottom Counts */}
-              <div className="grid grid-cols-4 gap-1 pt-1.5 border-t border-[#14233D] text-center text-[9.5px] font-mono">
-                <div className="p-1 rounded bg-[#060D18] border border-[#14233D]">
-                  <span className="text-emerald-400 font-bold block">{activeTruckers}</span>
-                  <span className="text-slate-400 text-[8.5px]">On Route</span>
-                </div>
-                <div className="p-1 rounded bg-[#060D18] border border-[#14233D]">
-                  <span className="text-blue-400 font-bold block">0</span>
-                  <span className="text-slate-400 text-[8.5px]">At Pickup</span>
-                </div>
-                <div className="p-1 rounded bg-[#060D18] border border-[#14233D]">
-                  <span className="text-amber-400 font-bold block">0</span>
-                  <span className="text-slate-400 text-[8.5px]">At Dropoff</span>
-                </div>
-                <div className="p-1 rounded bg-[#060D18] border border-[#14233D]">
-                  <span className="text-red-400 font-bold block">{inactiveTruckers}</span>
-                  <span className="text-slate-400 text-[8.5px]">Offline</span>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* C. Operational Row 2: Recent Truckers Table & Recent Loads Table */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5">
-            
-            {/* Recent Truckers Table (7 cols) */}
-            <div className="md:col-span-7 p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs">
-              <div className="flex items-center justify-between mb-2 border-b border-[#14233D] pb-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-[13px] font-bold font-display text-white">Recent Truckers</h3>
-                  <span className="px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-400 text-[9.5px] font-mono font-bold">
-                    {totalTruckers}
-                  </span>
-                </div>
-                <button
-                  onClick={() => handleNavigate('/truckers')}
-                  className="text-[11px] text-blue-400 hover:text-blue-300 font-bold cursor-pointer transition-colors"
-                >
-                  View All
-                </button>
-              </div>
-
-              {truckers.length === 0 ? (
-                <div className="py-7 text-center font-mono">
-                  <div className="w-8 h-8 rounded-lg bg-[#060D18] border border-[#14233D] text-slate-500 flex items-center justify-center mx-auto mb-1.5">
-                    <Truck className="w-4 h-4 opacity-50" />
-                  </div>
-                  <p className="text-[12px] font-sans font-bold text-slate-300">0 Truckers registered</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 font-mono">Onboarded fleet carriers will appear here in real time.</p>
-                  <button
-                    onClick={() => handleNavigate('/truckers')}
-                    className="mt-2.5 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] cursor-pointer inline-flex items-center gap-1"
-                  >
-                    <Plus className="w-3 h-3" /> Add Trucker
-                  </button>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="text-slate-500 font-mono text-[9.5px] uppercase border-b border-[#14233D]">
-                        <th className="pb-1.5 font-bold">Name</th>
-                        <th className="pb-1.5 font-bold">Phone</th>
-                        <th className="pb-1.5 font-bold">MC Number</th>
-                        <th className="pb-1.5 font-bold">Status</th>
-                        <th className="pb-1.5 font-bold">Last Active</th>
-                        <th className="pb-1.5 font-bold text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#14233D]/50 font-mono text-[10.5px]">
-                      {truckers.slice(0, 5).map((t) => (
-                        <tr 
-                          key={t.id} 
-                          className="hover:bg-[#0E1A2E] transition-colors cursor-pointer group"
-                          onClick={() => setSelectedTrucker(t)}
-                        >
-                          <td className="py-1.5 pr-2 font-sans font-bold text-white flex items-center gap-1.5">
-                            <div className="w-5 h-5 rounded bg-blue-600/15 text-blue-400 flex items-center justify-center text-[9px] shrink-0">
-                              <Truck className="w-3 h-3" />
-                            </div>
-                            <span className="truncate max-w-[95px]">{t.name}</span>
-                          </td>
-                          <td className="py-1.5 px-1.5 text-slate-400">{t.phone}</td>
-                          <td className="py-1.5 px-1.5 text-blue-400/90 font-bold">{t.mcNumber}</td>
-                          <td className="py-1.5 px-1.5">
-                            <span className={`px-1.5 py-0.2 rounded-full text-[8.5px] font-bold ${
-                              t.status === 'Active'
-                                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                                : t.status === 'Pending'
-                                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                                  : 'bg-red-500/15 text-red-400 border border-red-500/30'
-                            }`}>
-                              {t.status}
-                            </span>
-                          </td>
-                          <td className="py-1.5 px-1.5 text-slate-500">{t.lastActive}</td>
-                          <td className="py-1.5 pl-1.5 text-right" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-end gap-1 text-slate-400">
-                              <button 
-                                onClick={() => handleNavigate('/messages')} 
-                                className="p-0.5 hover:text-blue-400 cursor-pointer"
-                                title="Message"
-                              >
-                                <MessageSquare className="w-3 h-3" />
-                              </button>
-                              <a 
-                                href={`tel:${t.phone}`} 
-                                className="p-0.5 hover:text-emerald-400"
-                                title="Call"
-                              >
-                                <Phone className="w-3 h-3" />
-                              </a>
-                              <button 
-                                onClick={() => setSelectedTrucker(t)}
-                                className="p-0.5 hover:text-white cursor-pointer"
-                                title="Details"
-                              >
-                                <MoreVertical className="w-3 h-3" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-
-            {/* Recent Loads Table (5 cols) */}
-            <div className="md:col-span-5 p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs">
-              <div className="flex items-center justify-between mb-2 border-b border-[#14233D] pb-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-[13px] font-bold font-display text-white">Recent Loads</h3>
-                  <span className="px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-400 text-[9.5px] font-mono font-bold">
-                    {loads.length}
-                  </span>
-                </div>
-                <button
-                  onClick={() => handleNavigate('/loads')}
-                  className="text-[11px] text-blue-400 hover:text-blue-300 font-bold cursor-pointer transition-colors"
-                >
-                  View All
-                </button>
-              </div>
-
-              {loads.length === 0 ? (
-                <div className="py-7 text-center font-mono">
-                  <div className="w-8 h-8 rounded-lg bg-[#060D18] border border-[#14233D] text-slate-500 flex items-center justify-center mx-auto mb-1.5">
-                    <Package className="w-4 h-4 opacity-50" />
-                  </div>
-                  <p className="text-[12px] font-sans font-bold text-slate-300">No loads posted yet</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 font-mono">Freight loads created by dispatch will appear here.</p>
-                  <button
-                    onClick={() => handleNavigate('/loads')}
-                    className="mt-2.5 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] cursor-pointer inline-flex items-center gap-1"
-                  >
-                    <Plus className="w-3 h-3" /> Post Load
-                  </button>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse font-mono text-[10.5px]">
-                    <thead>
-                      <tr className="text-slate-500 text-[9.5px] uppercase border-b border-[#14233D]">
-                        <th className="pb-1.5 font-bold">Load #</th>
-                        <th className="pb-1.5 font-bold">From → To</th>
-                        <th className="pb-1.5 font-bold">Rate</th>
-                        <th className="pb-1.5 font-bold text-right">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#14233D]/50">
-                      {loads.slice(0, 5).map((l) => (
-                        <tr 
-                          key={l.id} 
-                          onClick={() => handleNavigate('/loads')}
-                          className="hover:bg-[#0E1A2E] transition-colors cursor-pointer"
-                        >
-                          <td className="py-1.5 pr-1.5 font-bold text-blue-400">{l.loadNumber}</td>
-                          <td className="py-1.5 px-1.5 text-slate-300 truncate max-w-[110px] font-sans text-[10.5px]" title={`${l.origin} → ${l.destination}`}>
-                            {l.origin.split(',')[0]} → {l.destination.split(',')[0]}
-                          </td>
-                          <td className="py-1.5 px-1.5 font-bold text-white">${l.rate.toLocaleString()}</td>
-                          <td className="py-1.5 pl-1.5 text-right">
-                            <span className={`px-1.5 py-0.2 rounded-full text-[8.5px] font-bold ${
-                              l.status === 'Assigned'
-                                ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
-                                : l.status === 'Open'
-                                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                                  : l.status === 'In Transit'
-                                    ? 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30'
-                                    : 'bg-cyan-500/15 text-cyan-400 border border-cyan-500/30'
-                            }`}>
-                              {l.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-
-          </div>
-
-          {/* D. Operational Row 3: Recent Brokers Table & Quick Stats Donut / Growth */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5">
-            
-            {/* Recent Brokers (7 cols) */}
-            <div className="md:col-span-7 p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs">
-              <div className="flex items-center justify-between mb-2 border-b border-[#14233D] pb-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-[13px] font-bold font-display text-white">Recent Brokers</h3>
-                  <span className="px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-400 text-[9.5px] font-mono font-bold">
-                    {totalBrokers}
-                  </span>
-                </div>
-                <button
-                  onClick={() => handleNavigate('/brokers')}
-                  className="text-[11px] text-blue-400 hover:text-blue-300 font-bold cursor-pointer transition-colors"
-                >
-                  View All
-                </button>
-              </div>
-
-              {brokers.length === 0 ? (
-                <div className="py-7 text-center font-mono">
-                  <div className="w-8 h-8 rounded-lg bg-[#060D18] border border-[#14233D] text-slate-500 flex items-center justify-center mx-auto mb-1.5">
-                    <Building2 className="w-4 h-4 opacity-50" />
-                  </div>
-                  <p className="text-[12px] font-sans font-bold text-slate-300">0 Brokers registered</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 font-mono">Shippers and freight broker accounts will appear here.</p>
-                  <button
-                    onClick={() => handleNavigate('/brokers')}
-                    className="mt-2.5 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px] cursor-pointer inline-flex items-center gap-1"
-                  >
-                    <Plus className="w-3 h-3" /> Add Broker
-                  </button>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="text-slate-500 font-mono text-[9.5px] uppercase border-b border-[#14233D]">
-                        <th className="pb-1.5 font-bold">Company Name</th>
-                        <th className="pb-1.5 font-bold">Contact</th>
-                        <th className="pb-1.5 font-bold">Phone</th>
-                        <th className="pb-1.5 font-bold">Status</th>
-                        <th className="pb-1.5 font-bold text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#14233D]/50 font-mono text-[10.5px]">
-                      {brokers.slice(0, 5).map((b) => (
-                        <tr 
-                          key={b.id} 
-                          onClick={() => handleNavigate('/brokers')}
-                          className="hover:bg-[#0E1A2E] transition-colors cursor-pointer"
-                        >
-                          <td className="py-1.5 pr-2 font-sans font-bold text-white flex items-center gap-1.5">
-                            <div className="w-5 h-5 rounded bg-blue-500/10 text-blue-400 flex items-center justify-center text-[9px] font-mono font-bold shrink-0">
-                              {b.avatarInitial || 'BR'}
-                            </div>
-                            <span className="truncate max-w-[110px]">{b.companyName}</span>
-                          </td>
-                          <td className="py-1.5 px-1.5 text-slate-300 font-sans">{b.contact}</td>
-                          <td className="py-1.5 px-1.5 text-slate-400">{b.phone}</td>
-                          <td className="py-1.5 px-1.5">
-                            <span className={`px-1.5 py-0.2 rounded-full text-[8.5px] font-bold ${
-                              b.status === 'Active'
-                                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                                : b.status === 'Pending'
-                                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                                  : 'bg-red-500/15 text-red-400 border border-red-500/30'
-                            }`}>
-                              {b.status}
-                            </span>
-                          </td>
-                          <td className="py-1.5 pl-1.5 text-right" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-end gap-1 text-slate-400">
-                              <button 
-                                onClick={() => handleNavigate('/messages')} 
-                                className="p-0.5 hover:text-blue-400 cursor-pointer"
-                                title="Message"
-                              >
-                                <MessageSquare className="w-3 h-3" />
-                              </button>
-                              <a 
-                                href={`tel:${b.phone}`} 
-                                className="p-0.5 hover:text-emerald-400"
-                                title="Call"
-                              >
-                                <Phone className="w-3 h-3" />
-                              </a>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-
-            {/* Quick Stats Panel (Donut Chart & Business Growth Bar Chart) (5 cols) */}
-            <div className="md:col-span-5 p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs flex flex-col justify-between">
-              
-              <div className="flex items-center justify-between mb-2 border-b border-[#14233D] pb-2">
-                <h3 className="text-[13px] font-bold font-display text-white">Quick Stats</h3>
-                <span className="text-[9.5px] font-mono text-slate-500">Live Network</span>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5 items-center">
-                
-                {/* Donut Chart */}
-                <div className="flex flex-col items-center justify-center p-2 rounded-lg bg-[#060D18] border border-[#14233D]">
-                  <div className="relative w-20 h-20 flex items-center justify-center">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                      {/* Background circle */}
-                      <path
-                        className="text-[#14233D]"
-                        strokeWidth="3.5"
-                        stroke="currentColor"
-                        fill="none"
-                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                      />
-                      {totalTruckers > 0 && (
-                        <>
-                          {/* Active arc */}
-                          <path
-                            className="text-emerald-400"
-                            strokeDasharray={`${activePct}, 100`}
-                            strokeWidth="3.8"
-                            strokeLinecap="round"
-                            stroke="currentColor"
-                            fill="none"
-                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                          />
-                          {/* Pending arc */}
-                          {pendingPct > 0 && (
-                            <path
-                              className="text-amber-400"
-                              strokeDasharray={`${pendingPct}, 100`}
-                              strokeDashoffset={`-${activePct}`}
-                              strokeWidth="3.8"
-                              strokeLinecap="round"
-                              stroke="currentColor"
-                              fill="none"
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                          )}
-                          {/* Inactive arc */}
-                          {inactivePct > 0 && (
-                            <path
-                              className="text-red-400"
-                              strokeDasharray={`${inactivePct}, 100`}
-                              strokeDashoffset={`-${activePct + pendingPct}`}
-                              strokeWidth="3.8"
-                              strokeLinecap="round"
-                              stroke="currentColor"
-                              fill="none"
-                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                          )}
-                        </>
-                      )}
-                    </svg>
-
-                    <div className="absolute text-center">
-                      <span className="text-[8px] text-slate-500 font-mono block">Total</span>
-                      <strong className="text-[13px] font-black text-white font-display leading-none">{totalTruckers}</strong>
-                      <span className="text-[7.5px] text-slate-400 block mt-0.5">Truckers</span>
-                    </div>
-                  </div>
-
-                  <div className="w-full space-y-0.5 mt-1.5 text-[9px] font-mono">
-                    <div className="flex items-center justify-between text-slate-300">
-                      <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Active</span>
-                      <span className="font-bold">{activeTruckers} ({activePct}%)</span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-300">
-                      <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-400" /> Pending</span>
-                      <span className="font-bold">{pendingTruckers} ({pendingPct}%)</span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-300">
-                      <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-red-400" /> Inactive</span>
-                      <span className="font-bold">{inactiveTruckers} ({inactivePct}%)</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Business Growth Bar Chart */}
-                <div className="p-2.5 rounded-lg bg-[#060D18] border border-[#14233D] flex flex-col justify-between h-full">
-                  <div>
-                    <span className="text-[10.5px] font-bold text-white block">Business Growth</span>
-                    <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-[15px] font-black text-emerald-400 font-display">
-                        {loads.length > 0 ? '+24%' : '0%'}
-                      </span>
-                    </div>
-                    <span className="text-[8.5px] text-slate-500 block">
-                      {loads.length > 0 ? 'Compared to last month' : 'Awaiting billing cycle'}
-                    </span>
-                  </div>
-
-                  {/* Monthly Vertical Bars */}
-                  <div className="flex items-end justify-between gap-1 h-16 pt-1.5 border-b border-[#14233D] text-[8.5px] font-mono text-slate-500">
-                    {[
-                      { m: 'Apr', h: loads.length > 0 ? '35%' : '8%' },
-                      { m: 'May', h: loads.length > 0 ? '50%' : '8%' },
-                      { m: 'Jun', h: loads.length > 0 ? '65%' : '8%' },
-                      { m: 'Jul', h: loads.length > 0 ? '75%' : '8%' },
-                      { m: 'Aug', h: loads.length > 0 ? '88%' : '8%' },
-                      { m: 'Sep', h: loads.length > 0 ? '100%' : '8%' }
-                    ].map((b) => (
-                      <div key={b.m} className="flex flex-col items-center gap-1 flex-1">
-                        <div className="w-full bg-[#0A1526] rounded-t-xs h-12 flex items-end">
-                          <div 
-                            className={`w-full rounded-t-xs transition-all ${loads.length > 0 ? 'bg-blue-500 hover:bg-blue-400' : 'bg-slate-800'}`}
-                            style={{ height: b.h }}
-                          />
-                        </div>
-                        <span>{b.m}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
+          <button
+            onClick={() => handleNavigate('/leads')}
+            className="text-xs text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1 self-start sm:self-auto cursor-pointer"
+          >
+            <span>Open Pipeline</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* ================================================================== */}
-        {/* RIGHT COLUMN: MESSAGES, ACTIONS, NOTIFICATIONS (3 Columns / ~22%)  */}
-        {/* ================================================================== */}
-        <div className="lg:col-span-3 space-y-3">
-          
-          {/* Panel 1: Recent Messages */}
-          <div className="p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs space-y-2.5">
-            <div className="flex items-center justify-between border-b border-[#14233D] pb-2">
-              <div className="flex items-center gap-1.5">
-                <h3 className="text-[13px] font-bold font-display text-white">Recent Messages</h3>
-                <span className="px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 text-[9.5px] font-mono font-bold">
-                  {messageThreads.length}
-                </span>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          <div className="p-3 rounded-xl bg-[#08101C] border border-[#1B293E] space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase font-bold text-emerald-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                1. New / Pending
+              </span>
+              <span className="text-xs font-mono font-bold text-white bg-emerald-500/20 px-1.5 py-0.2 rounded border border-emerald-500/30">
+                {newLeadsCount}
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400">Newly received applications awaiting initial review.</p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-[#08101C] border border-[#1B293E] space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase font-bold text-amber-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                2. In Review
+              </span>
+              <span className="text-xs font-mono font-bold text-white bg-amber-500/20 px-1.5 py-0.2 rounded border border-amber-500/30">
+                {inReviewLeadsCount}
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400">Equipment & lane verification in progress.</p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-[#08101C] border border-[#1B293E] space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase font-bold text-blue-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                3. Contacted
+              </span>
+              <span className="text-xs font-mono font-bold text-white bg-blue-500/20 px-1.5 py-0.2 rounded border border-blue-500/30">
+                {contactedLeadsCount}
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400">Dispatcher reached out to carrier driver/owner.</p>
+          </div>
+
+          <div className="p-3 rounded-xl bg-[#08101C] border border-[#1B293E] space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase font-bold text-purple-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                4. Onboarded
+              </span>
+              <span className="text-xs font-mono font-bold text-white bg-purple-500/20 px-1.5 py-0.2 rounded border border-purple-500/30">
+                {onboardedLeadsCount}
+              </span>
+            </div>
+            <p className="text-[10px] text-slate-400">Completed packet & active in fleet roster.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. Live Recent Leads & Fleet Truckers */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5">
+        <div className="lg:col-span-7 p-4 rounded-2xl bg-[#0A1322] border border-[#1B293E] shadow-sm flex flex-col justify-between space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1B293E] pb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center">
+                <Users className="w-3.5 h-3.5" />
               </div>
-              <button
-                onClick={() => handleNavigate('/messages')}
-                className="text-[11px] text-blue-400 hover:text-blue-300 font-bold cursor-pointer transition-colors"
-              >
-                View All
-              </button>
+              <div>
+                <h3 className="text-xs font-bold font-display text-white">Recent Carrier Leads</h3>
+                <span className="text-[10px] font-mono text-slate-400">Live Firestore submissions</span>
+              </div>
             </div>
 
-            {messageThreads.length === 0 ? (
-              <div className="py-6 text-center font-mono">
-                <Mail className="w-4 h-4 mx-auto mb-1.5 text-slate-600 opacity-50" />
-                <p className="text-[11px] font-sans font-bold text-slate-300">No recent messages</p>
-                <p className="text-[9.5px] text-slate-500 mt-0.5">Inquiries from the website will appear here in real time.</p>
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                {messageThreads.slice(0, 5).map((thread) => (
-                  <div
-                    key={thread.id}
-                    onClick={() => handleNavigate('/messages')}
-                    className="p-2 rounded-lg bg-[#060D18] hover:bg-[#0E1A2E] border border-[#14233D] transition-all cursor-pointer flex items-center justify-between gap-2.5 group"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-7 h-7 rounded-full bg-blue-600/20 border border-blue-500/30 text-blue-400 font-bold flex items-center justify-center text-[10.5px] shrink-0 font-mono">
-                        {thread.contactAvatar}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-bold text-white truncate group-hover:text-blue-300 transition-colors">
-                          {thread.contactName}
-                        </p>
-                        <p className="text-[10px] text-slate-400 truncate leading-tight mt-0.5">
-                          {thread.lastMessage}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0">
-                      <span className="text-[9px] font-mono text-slate-500 block">
-                        {thread.lastMessageTime}
-                      </span>
-                      {thread.unreadCount > 0 && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block mt-0.5" />
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
             <button
-              onClick={() => handleNavigate('/messages')}
-              className="w-full py-1.5 text-center text-[11px] font-bold text-blue-400 hover:text-blue-300 block pt-0.5 cursor-pointer"
+              onClick={() => handleNavigate('/leads')}
+              className="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 cursor-pointer"
             >
-              View All Messages →
+              <span>View All Leads</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {/* Panel 2: Upcoming Actions */}
-          <div className="p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs space-y-2.5">
-            <div className="flex items-center justify-between border-b border-[#14233D] pb-2">
-              <h3 className="text-[13px] font-bold font-display text-white">Upcoming Actions</h3>
-              <button
-                onClick={() => {
-                  const title = prompt('Enter new task title:');
-                  if (title) {
-                    operationsStore.addTask(title, 'Due today', 'High', 'general');
-                  }
-                }}
-                className="text-[11px] text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1 cursor-pointer"
-              >
-                <Plus className="w-3 h-3" />
-                <span>Add</span>
-              </button>
+          {leads.length === 0 ? (
+            <div className="py-10 text-center font-mono space-y-2">
+              <Users className="w-8 h-8 mx-auto text-slate-600 opacity-40" />
+              <p className="text-xs font-bold text-slate-300 font-sans">No leads received yet</p>
+              <p className="text-[10px] text-slate-500 max-w-xs mx-auto font-sans">
+                Carrier applications submitted via the website form will stream here in real-time.
+              </p>
             </div>
-
-            {tasks.length === 0 ? (
-              <div className="py-6 text-center font-mono">
-                <Check className="w-4 h-4 mx-auto mb-1.5 text-slate-600 opacity-50" />
-                <p className="text-[11px] font-sans font-bold text-slate-300">No pending tasks</p>
-                <p className="text-[9.5px] text-slate-500 mt-0.5">Add operational reminders or task assignments.</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {tasks.slice(0, 4).map((task, idx) => {
-                  const iconColor = 
-                    idx === 0 ? 'bg-blue-600/20 text-blue-400 border-blue-500/30' :
-                    idx === 1 ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-                    idx === 2 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                    'bg-cyan-500/20 text-cyan-400 border-cyan-500/30';
-
-                  return (
-                    <div
-                      key={task.id}
-                      className={`p-2 rounded-lg border transition-all flex items-center gap-2.5 ${
-                        task.isCompleted 
-                          ? 'bg-[#060D18]/50 border-[#14233D]/50 opacity-60' 
-                          : 'bg-[#060D18] border-[#14233D] hover:border-blue-500/30'
-                      }`}
-                    >
-                      <div className={`w-7 h-7 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-bold ${iconColor}`}>
-                        {idx === 0 ? <Mail className="w-3 h-3" /> :
-                         idx === 1 ? <Phone className="w-3 h-3" /> :
-                         idx === 2 ? <Package className="w-3 h-3" /> :
-                         <FileText className="w-3 h-3" />}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <p className={`text-[11px] font-semibold truncate ${task.isCompleted ? 'line-through text-slate-500' : 'text-white'}`}>
-                          {task.title}
+          ) : (
+            <div className="space-y-2 max-h-80 overflow-y-auto pr-1 scrollbar-thin">
+              {leads.slice(0, 5).map((lead) => (
+                <div
+                  key={lead.id}
+                  onClick={() => setSelectedLead(lead)}
+                  className="p-3 rounded-xl bg-[#08101C] hover:bg-[#111F33] border border-[#1B293E] hover:border-blue-500/30 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-blue-950/60 border border-blue-800/40 text-blue-400 font-bold text-xs flex items-center justify-center shrink-0">
+                      {lead.name ? lead.name.slice(0, 2).toUpperCase() : 'LE'}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-bold text-white truncate group-hover:text-blue-300 transition-colors">
+                          {lead.name}
                         </p>
-                        <span className="text-[9px] font-mono text-slate-400 block mt-0.5">
-                          {task.dueTime}
-                        </span>
+                        {lead.mcNumber && (
+                          <span className="text-[9px] font-mono text-slate-400 bg-[#15253D] px-1.5 py-0.2 rounded border border-[#213552]">
+                            {lead.mcNumber}
+                          </span>
+                        )}
                       </div>
-
-                      <button
-                        onClick={() => handleToggleTask(task.id)}
-                        className={`w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 transition-colors cursor-pointer ${
-                          task.isCompleted ? 'bg-blue-600 border-blue-600 text-white' : 'border-[#14233D] hover:border-blue-400 text-transparent'
-                        }`}
-                        title={task.isCompleted ? 'Mark incomplete' : 'Mark completed'}
-                      >
-                        <Check className="w-2.5 h-2.5" />
-                      </button>
+                      <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                        {lead.company ? `${lead.company} • ` : ''}{lead.equipment || 'Standard'}
+                      </p>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                  </div>
 
-          {/* Panel 3: System Notifications */}
-          <div className="p-3.5 rounded-xl bg-[#091322] border border-[#14233D] shadow-xs space-y-2.5">
-            <div className="flex items-center justify-between border-b border-[#14233D] pb-2">
-              <h3 className="text-[13px] font-bold font-display text-white">System Notifications</h3>
-              <button
-                onClick={() => handleNavigate('/settings')}
-                className="text-[11px] text-blue-400 hover:text-blue-300 font-bold cursor-pointer transition-colors"
-              >
-                View All
-              </button>
+                  <div className="flex items-center gap-2.5 shrink-0 text-right">
+                    <div>
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase inline-block ${
+                        lead.status === 'new' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                        lead.status === 'in_review' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                        lead.status === 'contacted' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                        lead.status === 'onboarded' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+                        'bg-slate-800 text-slate-400'
+                      }`}>
+                        {lead.status.replace('_', ' ')}
+                      </span>
+                      <span className="text-[8.5px] font-mono text-slate-500 block mt-0.5">
+                        {formatFirestoreDate(lead.createdAt)}
+                      </span>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-white transition-colors" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="pt-2 border-t border-[#1B293E] flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>Showing latest {Math.min(5, leads.length)} of {leads.length} records</span>
+            <span className="text-emerald-400 font-bold">Auto-syncing Live</span>
+          </div>
+        </div>
+
+        {/* Recent Truckers */}
+        <div className="lg:col-span-5 p-4 rounded-2xl bg-[#0A1322] border border-[#1B293E] shadow-sm flex flex-col justify-between space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1B293E] pb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                <Truck className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold font-display text-white">Active Fleet Truckers</h3>
+                <span className="text-[10px] font-mono text-slate-400">{activeTruckers} Active in network</span>
+              </div>
             </div>
 
-            {notifications.length === 0 ? (
-              <div className="py-6 text-center font-mono">
-                <FileText className="w-4 h-4 mx-auto mb-1.5 text-slate-600 opacity-50" />
-                <p className="text-[11px] font-sans font-bold text-slate-300">No notifications</p>
-                <p className="text-[9.5px] text-slate-500 mt-0.5">System and account alerts will be logged here.</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {notifications.slice(0, 4).map((n, idx) => {
-                  const badgeColor =
-                    idx === 0 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' :
-                    idx === 1 ? 'bg-blue-600/20 text-blue-400 border-blue-500/30' :
-                    idx === 2 ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' :
-                    'bg-purple-500/20 text-purple-400 border-purple-500/30';
-
-                  return (
-                    <div
-                      key={n.id}
-                      onClick={() => n.routeLink && handleNavigate(n.routeLink)}
-                      className="p-2 rounded-lg bg-[#060D18] hover:bg-[#0E1A2E] border border-[#14233D] transition-all cursor-pointer flex items-start gap-2.5"
-                    >
-                      <div className={`w-7 h-7 rounded-full border flex items-center justify-center shrink-0 text-[10px] mt-0.5 ${badgeColor}`}>
-                        {idx === 0 ? <Truck className="w-3 h-3" /> :
-                         idx === 1 ? <Mail className="w-3 h-3" /> :
-                         idx === 2 ? <FileText className="w-3 h-3" /> :
-                         <Plus className="w-3 h-3" />}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-1.5">
-                          <p className="text-[11px] font-bold text-white leading-tight truncate">{n.title}</p>
-                          <span className="text-[8.5px] font-mono text-slate-500 shrink-0">{n.timeAgo}</span>
-                        </div>
-                        <p className="text-[10px] text-slate-400 leading-tight line-clamp-2 mt-0.5">{n.description}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            <button
+              onClick={() => handleNavigate('/truckers')}
+              className="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <span>Manage</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-        </div>
+          {truckers.length === 0 ? (
+            <div className="py-10 text-center font-mono space-y-2">
+              <Truck className="w-8 h-8 mx-auto text-slate-600 opacity-40" />
+              <p className="text-xs font-bold text-slate-300 font-sans">No truckers registered yet</p>
+              <p className="text-[10px] text-slate-500 max-w-xs mx-auto font-sans">
+                Convert leads to truckers or add new carriers directly from the Truckers module.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-80 overflow-y-auto pr-1 scrollbar-thin">
+              {truckers.slice(0, 5).map((trucker) => (
+                <div
+                  key={trucker.id}
+                  onClick={() => setSelectedTrucker(trucker)}
+                  className="p-3 rounded-xl bg-[#08101C] hover:bg-[#111F33] border border-[#1B293E] hover:border-amber-500/30 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-xl bg-amber-950/60 border border-amber-800/40 text-amber-400 font-bold text-xs flex items-center justify-center shrink-0">
+                      <Truck className="w-4 h-4" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-white truncate group-hover:text-amber-300 transition-colors">
+                        {trucker.name}
+                      </p>
+                      <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                        {trucker.mcNumber || 'MC-Pending'} • {trucker.equipment}
+                      </p>
+                    </div>
+                  </div>
 
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase ${
+                      trucker.status === 'Active' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                      trucker.status === 'Pending' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                      'bg-slate-800 text-slate-400'
+                    }`}>
+                      {trucker.status}
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-white transition-colors" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="pt-2 border-t border-[#1B293E] flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>Roster capacity</span>
+            <span className="text-amber-400 font-bold">{totalTruckers} Onboarded</span>
+          </div>
+        </div>
       </div>
 
-      {/* ==================================================================== */}
-      {/* 3. FOOTER STATUS BAR                                                 */}
-      {/* ==================================================================== */}
-      <div className="pt-2.5 border-t border-[#14233D] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-slate-500">
-        <div>
-          <span>DGW Solutions LLC | Dispatching Global World</span>
+      {/* 6. Messages & Enterprise Roadmap */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5">
+        <div className="md:col-span-6 p-4 rounded-2xl bg-[#0A1322] border border-[#1B293E] shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1B293E] pb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
+                <Mail className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold font-display text-white">Recent Inquiries & Messages</h3>
+                <span className="text-[10px] font-mono text-slate-400">{unreadMessagesCount} unread inquiries</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => handleNavigate('/messages')}
+              className="text-[11px] font-bold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <span>Inbox</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {messages.length === 0 ? (
+            <div className="py-8 text-center font-mono space-y-1">
+              <Mail className="w-6 h-6 mx-auto text-slate-600 opacity-40" />
+              <p className="text-xs font-bold text-slate-300 font-sans">No messages</p>
+              <p className="text-[10px] text-slate-500 font-sans">Contact form inquiries will appear here.</p>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-60 overflow-y-auto pr-1 scrollbar-thin">
+              {messages.slice(0, 4).map((msg) => (
+                <div
+                  key={msg.id}
+                  onClick={() => handleNavigate('/messages')}
+                  className="p-2.5 rounded-xl bg-[#08101C] hover:bg-[#111F33] border border-[#1B293E] hover:border-purple-500/30 transition-all cursor-pointer flex items-start gap-2.5"
+                >
+                  <div className="w-7 h-7 rounded-full bg-purple-950/60 border border-purple-800/40 text-purple-300 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                    {msg.name ? msg.name.slice(0, 1).toUpperCase() : 'M'}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs font-bold text-white truncate">{msg.name}</p>
+                      <span className="text-[8.5px] font-mono text-slate-500">{formatFirestoreDate(msg.createdAt)}</span>
+                    </div>
+                    <p className="text-[11px] text-blue-300 font-medium truncate">{msg.subject || 'General Inquiry'}</p>
+                    <p className="text-[10px] text-slate-400 line-clamp-1 mt-0.5">{msg.message}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            System Online
-          </span>
-          <span>{currentTime || 'Sep 20, 2026, 10:42 AM'}</span>
+
+        <div className="md:col-span-6 p-4 rounded-2xl bg-[#0A1322] border border-[#1B293E] shadow-sm space-y-3">
+          <div className="flex items-center justify-between border-b border-[#1B293E] pb-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold font-display text-white">Enterprise Operations Modules</h3>
+                <span className="text-[10px] font-mono text-slate-400">Upcoming system integrations</span>
+              </div>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-blue-950/80 text-blue-400 border border-blue-800/50">
+              Roadmap
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="p-3 rounded-xl bg-[#08101C] border border-[#1B293E]/80 relative overflow-hidden space-y-1.5 opacity-85">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Package className="w-3.5 h-3.5 text-blue-400" />
+                  <span>Dispatch Automation</span>
+                </span>
+                <span className="px-1.5 py-0.2 rounded text-[8px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                  Coming Soon
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                Automated rate negotiation, routing optimization, and electronic load tendering.
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl bg-[#08101C] border border-[#1B293E]/80 relative overflow-hidden space-y-1.5 opacity-85">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Live Telematics API</span>
+                </span>
+                <span className="px-1.5 py-0.2 rounded text-[8px] font-mono font-bold bg-slate-800 text-slate-400 border border-slate-700">
+                  Coming Soon
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                Direct ELD & GPS telemetry sync for fleet tracking and geofence alerts.
+              </p>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-[#1B293E]">
+            <div className="flex items-center justify-between text-[11px] mb-1.5">
+              <span className="font-bold text-slate-300">Daily Operations Checklist</span>
+              <span className="font-mono text-[10px] text-blue-400">
+                {tasks.filter((t) => t.isCompleted).length}/{tasks.length} Completed
+              </span>
+            </div>
+            <div className="space-y-1">
+              {tasks.slice(0, 2).map((t) => (
+                <div 
+                  key={t.id}
+                  onClick={() => handleToggleTask(t.id)}
+                  className="flex items-center gap-2 p-1.5 rounded-lg bg-[#08101C] hover:bg-[#111F33] cursor-pointer text-[10.5px] transition-colors"
+                >
+                  <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border ${
+                    t.isCompleted ? 'bg-emerald-500 border-emerald-400 text-white' : 'border-slate-600'
+                  }`}>
+                    {t.isCompleted && <Check className="w-2.5 h-2.5" />}
+                  </div>
+                  <span className={`truncate ${t.isCompleted ? 'line-through text-slate-500' : 'text-slate-200'}`}>
+                    {t.title}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ==================================================================== */}
-      {/* TRUCKER PROFILE MODAL / DRAWER                                       */}
-      {/* ==================================================================== */}
-      {selectedTrucker && (
-        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-in fade-in">
-          <div className="bg-[#091322] border border-[#14233D] rounded-xl max-w-lg w-full p-5 space-y-3.5 shadow-2xl relative">
-            <div className="flex items-start justify-between border-b border-[#14233D] pb-2.5">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-lg bg-blue-600/20 text-blue-400 font-bold flex items-center justify-center">
-                  <Truck className="w-4 h-4" />
+      {/* Modal: Lead View */}
+      {selectedLead && (
+        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in-scale">
+          <div className="bg-[#0A1322] border border-[#1B293E] rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl relative">
+            <div className="flex items-start justify-between border-b border-[#1B293E] pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 font-bold flex items-center justify-center">
+                  <Users className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold font-display text-white">{selectedTrucker.name}</h3>
-                  <p className="text-[11px] text-slate-400">{selectedTrucker.company} • {selectedTrucker.mcNumber}</p>
+                  <h3 className="text-sm font-bold font-display text-white">{selectedLead.name}</h3>
+                  <p className="text-[11px] text-slate-400">{selectedLead.company || 'Independent Owner Operator'} • {selectedLead.phone}</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedTrucker(null)} className="p-1 rounded text-slate-400 hover:text-white cursor-pointer">
+              <button 
+                onClick={() => setSelectedLead(null)} 
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-[#08101C] border border-[#1B293E] cursor-pointer"
+              >
                 ✕
               </button>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-2.5 rounded-lg bg-[#060D18] border border-[#14233D]">
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
                 <span className="text-slate-500 text-[9px] font-mono uppercase block">Phone</span>
-                <a href={`tel:${selectedTrucker.phone}`} className="text-emerald-400 font-bold hover:underline font-mono">{selectedTrucker.phone}</a>
+                <a href={`tel:${selectedLead.phone}`} className="text-emerald-400 font-bold hover:underline font-mono">{selectedLead.phone}</a>
               </div>
-              <div className="p-2.5 rounded-lg bg-[#060D18] border border-[#14233D]">
-                <span className="text-slate-500 text-[9px] font-mono uppercase block">Status</span>
-                <span className="font-bold text-white">{selectedTrucker.status}</span>
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Email</span>
+                <span className="font-bold text-white truncate block">{selectedLead.email || 'N/A'}</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-[#060D18] border border-[#14233D]">
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
                 <span className="text-slate-500 text-[9px] font-mono uppercase block">Equipment</span>
-                <span className="font-bold text-white">{selectedTrucker.equipment}</span>
+                <span className="font-bold text-white">{selectedLead.equipment}</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-[#060D18] border border-[#14233D]">
-                <span className="text-slate-500 text-[9px] font-mono uppercase block">Location</span>
-                <span className="font-bold text-white">{selectedTrucker.location}</span>
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">MC Number</span>
+                <span className="font-bold text-white">{selectedLead.mcNumber || 'None'}</span>
               </div>
-              <div className="col-span-2 p-2.5 rounded-lg bg-[#060D18] border border-[#14233D]">
-                <span className="text-slate-500 text-[9px] font-mono uppercase block">Dispatch Notes</span>
-                <p className="text-slate-300 mt-0.5">{selectedTrucker.notes || 'No dispatch notes recorded.'}</p>
+              <div className="col-span-2 p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Preferred Lanes</span>
+                <p className="text-slate-300 mt-0.5">{selectedLead.preferredLanes || 'Any national dry freight lanes'}</p>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#14233D]">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#1B293E]">
               <button
                 onClick={() => {
-                  setSelectedTrucker(null);
-                  handleNavigate('/messages');
+                  setSelectedLead(null);
+                  handleNavigate('/leads');
                 }}
-                className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-sm shadow-blue-900/30 cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md shadow-blue-900/40 cursor-pointer"
               >
-                Send Message
+                Open in Leads Page
               </button>
               <button
-                onClick={() => setSelectedTrucker(null)}
-                className="px-3.5 py-1.5 rounded-lg bg-[#0E1A2E] hover:bg-[#142542] text-slate-300 font-bold text-xs border border-[#14233D] cursor-pointer"
+                onClick={() => setSelectedLead(null)}
+                className="px-4 py-2 rounded-xl bg-[#08101C] hover:bg-[#111F33] text-slate-300 font-bold text-xs border border-[#1B293E] cursor-pointer"
               >
                 Close
               </button>
@@ -1229,6 +768,82 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           </div>
         </div>
       )}
+
+      {/* Modal: Trucker View */}
+      {selectedTrucker && (
+        <div className="fixed inset-0 z-50 bg-[#030812]/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in-scale">
+          <div className="bg-[#0A1322] border border-[#1B293E] rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-2xl relative">
+            <div className="flex items-start justify-between border-b border-[#1B293E] pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold font-display text-white">{selectedTrucker.name}</h3>
+                  <p className="text-[11px] text-slate-400">{selectedTrucker.company} • {selectedTrucker.mcNumber}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedTrucker(null)} 
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-[#08101C] border border-[#1B293E] cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Phone</span>
+                <a href={`tel:${selectedTrucker.phone}`} className="text-emerald-400 font-bold hover:underline font-mono">{selectedTrucker.phone}</a>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Status</span>
+                <span className="font-bold text-white">{selectedTrucker.status}</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Equipment</span>
+                <span className="font-bold text-white">{selectedTrucker.equipment}</span>
+              </div>
+              <div className="p-2.5 rounded-xl bg-[#08101C] border border-[#1B293E]">
+                <span className="text-slate-500 text-[9px] font-mono uppercase block">Location</span>
+                <span className="font-bold text-white">{selectedTrucker.location}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#1B293E]">
+              <button
+                onClick={() => {
+                  setSelectedTrucker(null);
+                  handleNavigate('/truckers');
+                }}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs shadow-md shadow-amber-950/40 cursor-pointer"
+              >
+                Open in Fleet Roster
+              </button>
+              <button
+                onClick={() => setSelectedTrucker(null)}
+                className="px-4 py-2 rounded-xl bg-[#08101C] hover:bg-[#111F33] text-slate-300 font-bold text-xs border border-[#1B293E] cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="pt-3 border-t border-[#1B293E] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] font-mono text-slate-500">
+        <div>
+          <span>DGW Solutions LLC | Enterprise Logistics Command</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            System Online
+          </span>
+          <span>{currentTime || 'Sep 20, 2026'}</span>
+        </div>
+      </div>
 
     </div>
   );
