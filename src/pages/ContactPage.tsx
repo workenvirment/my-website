@@ -8,6 +8,7 @@ import {
   Send,
   Building2
 } from 'lucide-react';
+import { submitPublicCarrierLead } from '../services/publicFirestoreService';
 
 interface ContactPageProps {
   onNavigate?: (path: string) => void;
@@ -15,6 +16,8 @@ interface ContactPageProps {
 
 export const ContactPage: React.FC<ContactPageProps> = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -26,9 +29,32 @@ export const ContactPage: React.FC<ContactPageProps> = () => {
     notes: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    const result = await submitPublicCarrierLead({
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      mcNumber: formData.mcNumber,
+      equipment: formData.truckType,
+      truckCount: formData.truckCount,
+      preferredLanes: formData.currentLocation,
+      message: formData.notes,
+      source: 'public_website_contact_page'
+    });
+
+    setIsSubmitting(false);
+
+    if (result.success) {
+      setSubmitted(true);
+    } else {
+      setSubmitError(result.error || 'Unable to submit your inquiry. Please try again.');
+    }
   };
 
   return (
@@ -307,13 +333,26 @@ export const ContactPage: React.FC<ContactPageProps> = () => {
                 />
               </div>
 
+              {submitError && (
+                <div className="sm:col-span-2 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+                  {submitError}
+                </div>
+              )}
+
               <div className="sm:col-span-2 pt-2">
                 <button
                   type="submit"
-                  className="w-full py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all"
+                  disabled={isSubmitting}
+                  className={`w-full py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-xl flex items-center justify-center gap-2 transition-all min-h-[48px] active:scale-[0.98] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  <Send className="w-4 h-4 text-amber-400" />
-                  <span>Submit Inquiry to Dispatching Team</span>
+                  {isSubmitting ? (
+                    <span>Submitting Inquiry...</span>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 text-amber-400" />
+                      <span>Submit Inquiry to Dispatching Team</span>
+                    </>
+                  )}
                 </button>
                 <p className="text-[11px] text-slate-500 text-center mt-2 font-mono">
                   Your information is kept confidential.

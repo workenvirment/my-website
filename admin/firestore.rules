@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Reusable Authorization Helper: Verifies genuine administrator status via Firebase Custom Claims
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Validation Helpers
+    function isNonEmptyString(val, maxLen) {
+      return val is string && val.size() > 0 && val.size() <= maxLen;
+    }
+
+    function isOptionalString(data, fieldName, maxLen) {
+      return !(fieldName in data) || (data[fieldName] is string && data[fieldName].size() <= maxLen);
+    }
+
+    // ========================================================================
+    // COLLECTION: carrierLeads
+    // ========================================================================
+    match /carrierLeads/{leadId} {
+      // 1. Admin Read, Update, Delete (Restricted strictly to isAdmin custom claim)
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin();
+
+      // 2. Public Submission (Create Only)
+      // Strict payload schema enforcement: required fields, string length bounds, fixed initial status
+      allow create: if (
+        // Required fields
+        isNonEmptyString(request.resource.data.name, 100) &&
+        isNonEmptyString(request.resource.data.phone, 30) &&
+        isNonEmptyString(request.resource.data.equipment, 100) &&
+        
+        // Optional fields with length limits
+        isOptionalString(request.resource.data, 'email', 100) &&
+        isOptionalString(request.resource.data, 'company', 150) &&
+        isOptionalString(request.resource.data, 'mcNumber', 50) &&
+        isOptionalString(request.resource.data, 'truckCount', 20) &&
+        isOptionalString(request.resource.data, 'preferredLanes', 300) &&
+        isOptionalString(request.resource.data, 'message', 2000) &&
+        isOptionalString(request.resource.data, 'source', 100) &&
+        
+        // Public submissions cannot assign arbitrary statuses
+        request.resource.data.status == 'new' &&
+        
+        // Disallow arbitrary or unauthorized field injection
+        request.resource.data.keys().hasOnly([
+          'name', 'phone', 'email', 'company', 'mcNumber', 
+          'equipment', 'truckCount', 'preferredLanes', 'message', 
+          'status', 'source', 'createdAt', 'updatedAt'
+        ])
+      ) || isAdmin();
+    }
+
+    // ========================================================================
+    // COLLECTION: contactMessages
+    // ========================================================================
+    match /contactMessages/{messageId} {
+      // 1. Admin Read, Update, Delete (Restricted strictly to isAdmin custom claim)
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin();
+
+      // 2. Public Submission (Create Only)
+      // Strict payload schema enforcement: required fields, string length bounds, fixed initial status
+      allow create: if (
+        // Required fields
+        isNonEmptyString(request.resource.data.name, 100) &&
+        isNonEmptyString(request.resource.data.email, 100) &&
+        isNonEmptyString(request.resource.data.message, 3000) &&
+        
+        // Optional fields with length limits
+        isOptionalString(request.resource.data, 'phone', 30) &&
+        isOptionalString(request.resource.data, 'subject', 200) &&
+        isOptionalString(request.resource.data, 'source', 100) &&
+
+        // Public submissions cannot assign arbitrary statuses
+        request.resource.data.status == 'unread' &&
+
+        // Disallow arbitrary or unauthorized field injection
+        request.resource.data.keys().hasOnly([
+          'name', 'email', 'phone', 'subject', 'message', 
+          'status', 'source', 'createdAt', 'updatedAt'
+        ])
+      ) || isAdmin();
+    }
+
+    // ========================================================================
+    // COLLECTION: truckers (Real Onboarded Carriers)
+    // ========================================================================
+    match /truckers/{truckerId} {
+      // Strictly restricted to authenticated admins with custom claim
+      allow read, write: if isAdmin();
+    }
+
+    // Default deny for all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

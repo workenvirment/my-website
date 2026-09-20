@@ -8,6 +8,7 @@ import {
   type Auth, 
   type User as FirebaseUser 
 } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 
 // Safely extract environment variables from Vite
 const firebaseConfig = {
@@ -29,12 +30,14 @@ export const isFirebaseConfigured: boolean = Boolean(
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
+let db: Firestore | null = null;
 let googleProvider: GoogleAuthProvider | null = null;
 
 try {
   if (isFirebaseConfigured) {
     app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
     auth = getAuth(app);
+    db = getFirestore(app);
     googleProvider = new GoogleAuthProvider();
     googleProvider.setCustomParameters({
       prompt: 'select_account'
@@ -47,10 +50,11 @@ try {
   console.warn('[Firebase] Initialization caught an error, falling back to safe offline mode:', error);
   app = null;
   auth = null;
+  db = null;
   googleProvider = null;
 }
 
-export { app, auth, googleProvider };
+export { app, auth, db, googleProvider };
 
 /**
  * Sign in using Firebase Google Auth Popup with fallback resilience

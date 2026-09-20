@@ -1,0 +1,22 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Firebase Service Account Credentials & Private Keys (Never commit)
+*serviceAccountKey*.json
+*service-account*.json
+service-account.json
+serviceAccount.json
+credentials/
+.credentials/
+*.pem
+*.key

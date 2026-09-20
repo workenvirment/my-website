@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Send, CheckCircle2 } from 'lucide-react';
-import type { LeadSubmission } from '../../types';
+import { submitPublicCarrierLead } from '../../services/publicFirestoreService';
 
 export const CarrierContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -18,41 +18,34 @@ export const CarrierContactForm: React.FC = () => {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    if (loading) return;
 
-    const submission: LeadSubmission = {
-      id: 'lead-' + Date.now(),
-      type: 'carrier',
+    setLoading(true);
+    setError(null);
+
+    const result = await submitPublicCarrierLead({
       name: formData.name,
-      companyName: formData.companyName,
+      company: formData.companyName,
       phone: formData.phone,
       email: formData.email,
       mcNumber: formData.mcNumber,
-      equipment: formData.equipment,
-      truckLength: formData.truckLength,
-      currentLocation: formData.currentLocation,
-      preferredStates: formData.preferredStates,
+      equipment: `${formData.equipment} (${formData.truckLength})`,
+      preferredLanes: `${formData.currentLocation}${formData.preferredStates ? ` | Lanes: ${formData.preferredStates}` : ''}`,
       message: formData.message,
-      submittedAt: new Date().toLocaleString(),
-      status: 'New',
-    };
+      source: 'public_website_carrier_application'
+    });
 
-    try {
-      const existing = localStorage.getItem('dgw_leads_store');
-      const list = existing ? JSON.parse(existing) : [];
-      list.unshift(submission);
-      localStorage.setItem('dgw_leads_store', JSON.stringify(list));
-    } catch {
-      // ignore
-    }
+    setLoading(false);
 
-    setTimeout(() => {
-      setLoading(false);
+    if (result.success) {
       setSubmitted(true);
-    }, 600);
+    } else {
+      setError(result.error || 'Failed to submit application. Please try again.');
+    }
   };
 
   if (submitted) {
@@ -207,10 +200,16 @@ export const CarrierContactForm: React.FC = () => {
         />
       </div>
 
+      {error && (
+        <div className="p-3 rounded-xl bg-red-950/80 border border-red-500/50 text-red-200 text-xs font-medium">
+          {error}
+        </div>
+      )}
+
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-brand-gold via-amber-400 to-brand-gold text-slate-950 font-bold text-xs hover:from-amber-400 hover:to-brand-gold transition-all flex items-center justify-center gap-2 shadow-glow-gold"
+        className={`w-full py-3 px-6 rounded-xl bg-gradient-to-r from-brand-gold via-amber-400 to-brand-gold text-slate-950 font-bold text-xs hover:from-amber-400 hover:to-brand-gold transition-all flex items-center justify-center gap-2 shadow-glow-gold ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
       >
         {loading ? (
           <span>Processing Application...</span>

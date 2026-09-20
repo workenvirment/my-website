@@ -1,0 +1,3 @@
+# Robots.txt for DGW Solutions LLC Private Admin Portal
+User-agent: *
+Disallow: /

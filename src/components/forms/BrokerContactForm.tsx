@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Send, CheckCircle2 } from 'lucide-react';
-import type { LeadSubmission } from '../../types';
+import { submitPublicContactMessage } from '../../services/publicFirestoreService';
 
 export const BrokerContactForm: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -17,40 +17,40 @@ export const BrokerContactForm: React.FC = () => {
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+
     setLoading(true);
+    setError(null);
 
-    const submission: LeadSubmission = {
-      id: 'lead-' + Date.now(),
-      type: 'broker',
-      name: formData.name,
-      companyName: formData.companyName,
-      phone: formData.phone,
+    const messageDetails = [
+      `Company: ${formData.companyName}`,
+      formData.mcNumber ? `MC / DOT: ${formData.mcNumber}` : null,
+      `Equipment: ${formData.equipment}`,
+      formData.origin ? `Origin: ${formData.origin}` : null,
+      formData.destination ? `Destination: ${formData.destination}` : null,
+      formData.message ? `Notes / Rate: ${formData.message}` : null
+    ].filter(Boolean).join('\n');
+
+    const result = await submitPublicContactMessage({
+      name: formData.companyName ? `${formData.name} (${formData.companyName})` : formData.name,
       email: formData.email,
-      mcNumber: formData.mcNumber,
-      equipment: formData.equipment,
-      origin: formData.origin,
-      destination: formData.destination,
-      message: formData.message,
-      submittedAt: new Date().toLocaleString(),
-      status: 'New',
-    };
+      phone: formData.phone,
+      subject: `Capacity Inquiry: ${formData.companyName || 'Broker'} - ${formData.equipment}`,
+      message: messageDetails || 'Broker freight capacity request',
+      source: 'public_website_broker_form'
+    });
 
-    try {
-      const existing = localStorage.getItem('dgw_leads_store');
-      const list = existing ? JSON.parse(existing) : [];
-      list.unshift(submission);
-      localStorage.setItem('dgw_leads_store', JSON.stringify(list));
-    } catch {
-      // ignore
-    }
+    setLoading(false);
 
-    setTimeout(() => {
-      setLoading(false);
+    if (result.success) {
       setSubmitted(true);
-    }, 600);
+    } else {
+      setError(result.error || 'Failed to submit request. Please try again.');
+    }
   };
 
   if (submitted) {
@@ -203,10 +203,16 @@ export const BrokerContactForm: React.FC = () => {
         />
       </div>
 
+      {error && (
+        <div className="p-3 rounded-xl bg-red-950/80 border border-red-500/50 text-red-200 text-xs font-medium">
+          {error}
+        </div>
+      )}
+
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-3 px-6 rounded-xl bg-brand-cyan text-slate-950 font-bold text-xs hover:bg-cyan-400 transition-all flex items-center justify-center gap-2 shadow-glow-cyan"
+        className={`w-full py-3 px-6 rounded-xl bg-brand-cyan text-slate-950 font-bold text-xs hover:bg-cyan-400 transition-all flex items-center justify-center gap-2 shadow-glow-cyan ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
       >
         {loading ? (
           <span>Transmitting Load Specs...</span>
