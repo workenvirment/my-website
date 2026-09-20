@@ -1,5 +1,13 @@
-# Robots.txt for DGW Solutions LLC
+# Robots.txt for DGW Solutions LLC (https://dgwsolutionllc.com)
 User-agent: *
 Allow: /
+
+# Disallow private and administrative areas
+Disallow: /admin
+Disallow: /admin/
+Disallow: /portal
+Disallow: /portal/
+Disallow: /portal-simulator
+Disallow: /portal-demo
 
 Sitemap: https://dgwsolutionllc.com/sitemap.xml

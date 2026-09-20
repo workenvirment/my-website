@@ -5,6 +5,7 @@ import { MobileBottomBar } from './components/layout/MobileBottomBar';
 import { CinematicVisualBackground } from './components/background/CinematicVisualBackground';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { SeoHead, type SeoHeadProps } from './components/common/SeoHead';
+import { FAQ_LIST } from './data/faqData';
 
 // Code-split all page components with React.lazy()
 const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
@@ -73,42 +74,57 @@ export function App() {
     }
   }, []);
 
-  // SEO configuration for all public routes and 404 fallback
+  // SEO configuration for all public routes, private simulator, and 404 fallback
   const seoConfig: SeoHeadProps = useMemo(() => {
     switch (currentPath) {
       case '/services':
         return {
-          title: 'Dispatch Services | DGW Solutions LLC — Truck Freight & Broker Coordination',
-          description: 'Explore our truck dispatching services: freight rate negotiation, broker packet setup, route planning, and dedicated carrier operational assistance.',
+          title: 'Truck Dispatch Services | DGW Solutions LLC',
+          description: 'Explore our dedicated truck dispatching services: freight rate negotiation, broker packet setup, route planning, and back-office carrier support.',
           canonicalPath: '/services',
           breadcrumbs: [
             { name: 'Home', path: '/' },
             { name: 'Dispatch Services', path: '/services' }
-          ]
+          ],
+          schemaData: {
+            '@type': 'Service',
+            name: 'Truck Dispatching & Freight Coordination',
+            provider: {
+              '@type': 'Organization',
+              name: 'DGW Solutions LLC',
+              url: 'https://dgwsolutionllc.com/'
+            },
+            serviceType: 'Freight Dispatching',
+            description: 'Dedicated back-office truck dispatching assistance for motor carriers including rate negotiation, broker setups, and route coordination.',
+            areaServed: 'US'
+          }
         };
+
       case '/how-it-works':
         return {
-          title: 'How It Works | DGW Solutions LLC — Carrier Onboarding & Dispatch Process',
-          description: 'Learn how DGW Solutions LLC partners with carriers: from quick document submission and rate confirmation to load coordination and delivery.',
+          title: 'How It Works | Carrier Onboarding & Dispatch Process | DGW Solutions LLC',
+          description: 'Learn how DGW Solutions LLC partners with carriers: from document setup (W-9, COI, MC Authority) to load booking, rate confirmations, and delivery support.',
           canonicalPath: '/how-it-works',
           breadcrumbs: [
             { name: 'Home', path: '/' },
             { name: 'How It Works', path: '/how-it-works' }
           ]
         };
+
       case '/equipment':
         return {
-          title: 'Equipment We Dispatch | DGW Solutions LLC — Dry Van, Reefer, Flatbed, Box Truck',
-          description: 'Comprehensive dispatching support for 53ft Dry Vans, Refrigerated Reefers, Flatbeds, Step Decks, Box Trucks, and Hotshot equipment types.',
+          title: 'Equipment We Dispatch | Dry Van, Reefer, Flatbed, Box Truck | DGW Solutions LLC',
+          description: 'Comprehensive dispatching support for 53ft Dry Vans, Refrigerated Reefers, Flatbeds, Step Decks, Box Trucks, Hotshots, and Power Only equipment.',
           canonicalPath: '/equipment',
           breadcrumbs: [
             { name: 'Home', path: '/' },
             { name: 'Equipment', path: '/equipment' }
           ]
         };
+
       case '/about':
         return {
-          title: 'About Us | DGW Solutions LLC — Dedicated Freight Dispatching & Logistics Support',
+          title: 'About Us | DGW Solutions LLC — Dispatching Global World',
           description: 'Learn about DGW Solutions LLC and the Dispatching Global World team led by Saad Altaf, dedicated to supporting carriers and owner-operators nationwide.',
           canonicalPath: '/about',
           breadcrumbs: [
@@ -116,11 +132,12 @@ export function App() {
             { name: 'About Us', path: '/about' }
           ]
         };
+
       case '/contact':
       case '/apply':
       case '/carrier-onboarding':
         return {
-          title: 'Contact Dispatch Team | DGW Solutions LLC — Carrier Onboarding & Inquiries',
+          title: 'Contact Dispatch Team & Carrier Onboarding | DGW Solutions LLC',
           description: 'Get in touch with the DGW Solutions LLC dispatch team or submit your carrier details to start receiving dedicated freight dispatching support.',
           canonicalPath: '/contact',
           breadcrumbs: [
@@ -128,6 +145,97 @@ export function App() {
             { name: 'Contact & Onboarding', path: '/contact' }
           ]
         };
+
+      case '/faq':
+        return {
+          title: 'Frequently Asked Questions | DGW Solutions LLC',
+          description: 'Find answers to common questions about freight dispatching, carrier requirements, rate confirmations, NOA factoring, and broker packets.',
+          canonicalPath: '/faq',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'FAQ', path: '/faq' }
+          ],
+          schemaData: {
+            '@type': 'FAQPage',
+            mainEntity: FAQ_LIST.map((faq) => ({
+              '@type': 'Question',
+              name: faq.question,
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: faq.answer
+              }
+            }))
+          }
+        };
+
+      case '/brokers':
+        return {
+          title: 'Broker Solutions & Carrier Capacity | DGW Solutions LLC',
+          description: 'Partner with DGW Solutions LLC for verified carrier capacity. Access reliable 53ft Dry Vans, Reefers, and Flatbeds for your freight lanes.',
+          canonicalPath: '/brokers',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Brokers', path: '/brokers' }
+          ]
+        };
+
+      case '/carriers':
+        return {
+          title: 'Carrier Dispatching Solutions | DGW Solutions LLC',
+          description: 'Dedicated dispatching services for owner-operators and fleet carriers. High-paying freight, advance route planning, factoring coordination, and no forced dispatch.',
+          canonicalPath: '/carriers',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Carriers', path: '/carriers' }
+          ]
+        };
+
+      case '/documents':
+        return {
+          title: 'Carrier Documents & Compliance Guidelines | DGW Solutions LLC',
+          description: 'Access essential carrier onboarding requirements: active MC Authority, W-9 form, Certificate of Insurance (COI), and Notice of Assignment (NOA).',
+          canonicalPath: '/documents',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Documents', path: '/documents' }
+          ]
+        };
+
+      case '/payments':
+        return {
+          title: 'Factoring & Payment Options | DGW Solutions LLC',
+          description: 'Understand carrier payment workflows: freight factoring coordination, QuickPay terms, settlement calculation, and transparent dispatch billing.',
+          canonicalPath: '/payments',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Payments', path: '/payments' }
+          ]
+        };
+
+      case '/mc-lookup':
+        return {
+          title: 'FMCSA & MC Registry Lookup | DGW Solutions LLC',
+          description: 'Verify motor carrier safety ratings, USDOT operating authority status, insurance filings, and registration records.',
+          canonicalPath: '/mc-lookup',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'MC Lookup', path: '/mc-lookup' }
+          ]
+        };
+
+      case '/routes-loadboard':
+      case '/routes':
+      case '/load-board':
+        return {
+          title: 'Freight Routes & Load Board | DGW Solutions LLC',
+          description: 'Explore high-density freight lanes across the Midwest, Southeast, Northeast, and West Coast with load board simulation and route coordination.',
+          canonicalPath: '/routes-loadboard',
+          breadcrumbs: [
+            { name: 'Home', path: '/' },
+            { name: 'Routes & Load Board', path: '/routes-loadboard' }
+          ]
+        };
+
       case '/privacy-policy':
       case '/terms':
         return {
@@ -139,104 +247,37 @@ export function App() {
             { name: 'Privacy Policy', path: '/privacy-policy' }
           ]
         };
-      case '/faq':
-        return {
-          title: 'Frequently Asked Questions | DGW Solutions LLC — Dispatch Services & Carrier FAQ',
-          description: 'Find answers to common questions about truck dispatching, rate negotiations, factoring, carrier requirements, and broker packets at DGW Solutions LLC.',
-          canonicalPath: '/faq',
-          breadcrumbs: [
-            { name: 'Home', path: '/' },
-            { name: 'FAQ', path: '/faq' }
-          ]
-        };
-      case '/brokers':
-        return {
-          title: 'Freight Broker Solutions | DGW Solutions LLC — Reliable Carrier Network',
-          description: 'Partner with DGW Solutions LLC for dedicated, verified carrier capacity. Access reliable 53ft Dry Vans, Reefers, and Flatbeds for your freight lanes.',
-          canonicalPath: '/brokers',
-          breadcrumbs: [
-            { name: 'Home', path: '/' },
-            { name: 'Brokers', path: '/brokers' }
-          ]
-        };
-      case '/carriers':
-        return {
-          title: 'Carrier Dispatch Services | DGW Solutions LLC — Maximize Your RPM & Keep Wheels Moving',
-          description: 'Dedicated dispatching services for owner-operators and fleet carriers. High-paying freight, route planning, factoring assistance, and no forced dispatch.',
-          canonicalPath: '/carriers',
-          breadcrumbs: [
-            { name: 'Home', path: '/' },
-            { name: 'Carriers', path: '/carriers' }
-          ]
-        };
-      case '/documents':
-        return {
-          title: 'Carrier Documents & Compliance | DGW Solutions LLC — Dispatch Packets & Forms',
-          description: 'Access essential carrier onboarding documents, W-9 forms, Certificates of Insurance (COI), Notice of Assignment (NOA), and dispatcher-carrier agreements.',
-          canonicalPath: '/documents',
-          breadcrumbs: [
-            { name: 'Home', path: '/' },
-            { name: 'Documents', path: '/documents' }
-          ]
-        };
-      case '/payments':
-        return {
-          title: 'Factoring & Payment Options | DGW Solutions LLC — Fast Settlements & Transparency',
-          description: 'Understand carrier payment workflows, factoring company coordination, quick-pay settlements, and transparent dispatch percentage rates.',
-          canonicalPath: '/payments',
-          breadcrumbs: [
-            { name: 'Home', path: '/' },
-            { name: 'Payments', path: '/payments' }
-          ]
-        };
-      case '/mc-lookup':
-        return {
-          title: 'FMCSA & MC Registry Lookup | DGW Solutions LLC — Motor Carrier Safety Verification',
-          description: 'Verify motor carrier safety records, USDOT operating authority status, insurance filings, and FMCSA safety ratings.',
-          canonicalPath: '/mc-lookup',
-          breadcrumbs: [
-            { name: 'Home', path: '/' },
-            { name: 'MC Lookup', path: '/mc-lookup' }
-          ]
-        };
-      case '/routes-loadboard':
-      case '/routes':
-      case '/load-board':
-        return {
-          title: 'Routes & Freight Network | DGW Solutions LLC — High-Density Lanes & Load Board',
-          description: 'Explore premier freight lanes across the Midwest, Southeast, Northeast, and West Coast with real-time rate averages and load board simulation.',
-          canonicalPath: '/routes-loadboard',
-          breadcrumbs: [
-            { name: 'Home', path: '/' },
-            { name: 'Routes & Load Board', path: '/routes-loadboard' }
-          ]
-        };
+
       case '/portal':
       case '/portal-simulator':
       case '/portal-demo':
         return {
-          title: 'Operations Portal Simulator | DGW Solutions LLC — Carrier & Broker Command Center',
+          title: 'Operations Portal Simulator | DGW Solutions LLC',
           description: 'Interactive demo of the DGW Logistics Operations Center. Experience fleet management, live dispatch maps, document managers, and freight boards.',
           canonicalPath: '/portal',
+          noIndex: true, // Non-indexable prototype
           breadcrumbs: [
             { name: 'Home', path: '/' },
             { name: 'Operations Portal', path: '/portal' }
           ]
         };
+
       case '/':
         return {
-          title: 'DGW Solutions LLC | Dispatching Global World — Professional Logistics & Truck Dispatching Support',
-          description: 'DGW Solutions LLC and its Dispatching Global World division provide dedicated logistics and truck dispatching support for carriers and owner-operators.',
+          title: 'DGW Solutions LLC | Professional Truck Dispatching & Logistics Support',
+          description: 'DGW Solutions LLC and its Dispatching Global World division provide dedicated logistics and truck dispatching support for carriers and owner-operators nationwide.',
           canonicalPath: '/',
           breadcrumbs: [
             { name: 'Home', path: '/' }
           ]
         };
+
       default:
         return {
-          title: 'Page Not Found (404) | DGW Solutions LLC — Logistics Route Unreachable',
+          title: 'Page Not Found (404) | DGW Solutions LLC',
           description: 'The requested route or dispatch waypoint could not be found. Return to the DGW Solutions LLC dispatch command center.',
           canonicalPath: '/404',
+          noIndex: true, // Non-indexable 404 page
           breadcrumbs: [
             { name: 'Home', path: '/' },
             { name: '404 Not Found', path: '/404' }
