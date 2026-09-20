@@ -137,15 +137,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
             {/* Hero Truck Image Frame */}
             <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl bg-white border border-slate-200/80 group z-10">
-              <img 
-                src="/images/blue_semi_truck_sunset.webp" 
-                alt="DGW Solutions LLC Metallic Royal Blue Commercial Freight Semi-Truck at Sunset"
-                width={1376}
-                height={768}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-auto object-cover object-center group-hover:scale-103 transition-transform duration-700"
-              />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet="/images/blue_semi_truck_sunset-375.avif 375w, /images/blue_semi_truck_sunset-768.avif 768w, /images/blue_semi_truck_sunset.avif 1376w"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 680px"
+                />
+                <source
+                  type="image/webp"
+                  srcSet="/images/blue_semi_truck_sunset-375.webp 375w, /images/blue_semi_truck_sunset-768.webp 768w, /images/blue_semi_truck_sunset.webp 1376w"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 680px"
+                />
+                <img 
+                  src="/images/blue_semi_truck_sunset.webp" 
+                  alt="DGW Solutions LLC Metallic Royal Blue Commercial Freight Semi-Truck at Sunset"
+                  width={1376}
+                  height={768}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-auto object-cover object-center group-hover:scale-103 transition-transform duration-700"
+                />
+              </picture>
               {/* Soft Ambient Blend on Left Edge */}
               <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-white/35 via-white/10 to-transparent pointer-events-none" />
             </div>
@@ -390,15 +402,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
           {/* Right Column: Real Semi-Truck Photo */}
           <div className="lg:col-span-6 relative min-h-[300px] lg:min-h-full overflow-hidden bg-slate-900">
-            <img 
-              src="/images/night_highway_truck.webp" 
-              alt="Commercial semi-truck on interstate corridor - DGW Solutions LLC"
-              width={896}
-              height={1200}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover object-center filter brightness-105 contrast-110 hover:scale-105 transition-transform duration-700"
-            />
+            <picture>
+              <source
+                type="image/avif"
+                srcSet="/images/night_highway_truck-375.avif 375w, /images/night_highway_truck-768.avif 768w, /images/night_highway_truck.avif 896w"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 450px"
+              />
+              <source
+                type="image/webp"
+                srcSet="/images/night_highway_truck-375.webp 375w, /images/night_highway_truck-768.webp 768w, /images/night_highway_truck.webp 896w"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 450px"
+              />
+              <img 
+                src="/images/night_highway_truck.webp" 
+                alt="Commercial semi-truck on interstate corridor - DGW Solutions LLC"
+                width={896}
+                height={1200}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover object-center filter brightness-105 contrast-110 hover:scale-105 transition-transform duration-700"
+              />
+            </picture>
             {/* Soft Ambient Vignette */}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent lg:bg-gradient-to-l lg:from-transparent lg:to-slate-950/80 pointer-events-none" />
             
@@ -436,15 +460,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {/* Photo 1: Commercial Sleeper Fleet */}
           <div className="group rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-lg hover:shadow-2xl transition-all flex flex-col">
             <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-slate-950">
-              <img 
-                src="/images/fleet_sunset_row.webp" 
-                alt="Commercial semi-truck fleet parked in a row - DGW Solutions LLC"
-                width={1376}
-                height={768}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet="/images/fleet_sunset_row-375.avif 375w, /images/fleet_sunset_row-768.avif 768w, /images/fleet_sunset_row.avif 1376w"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 680px"
+                />
+                <source
+                  type="image/webp"
+                  srcSet="/images/fleet_sunset_row-375.webp 375w, /images/fleet_sunset_row-768.webp 768w, /images/fleet_sunset_row.webp 1376w"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 680px"
+                />
+                <img 
+                  src="/images/fleet_sunset_row.webp" 
+                  alt="Commercial semi-truck fleet parked in a row - DGW Solutions LLC"
+                  width={1376}
+                  height={768}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </picture>
               <div className="absolute top-4 left-4">
                 <span className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md text-amber-400 font-mono text-xs font-bold border border-white/20 shadow-md">
                   CLASS 8 COMMERCIAL FLEET
@@ -484,15 +520,27 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {/* Photo 2: Heavy Liquid Bulk Tanker */}
           <div className="group rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-lg hover:shadow-2xl transition-all flex flex-col">
             <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-slate-950">
-              <img 
-                src="/images/tanker_night_refinery.webp" 
-                alt="Liquid bulk tanker transport - DGW Solutions LLC"
-                width={1376}
-                height={768}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet="/images/tanker_night_refinery-375.avif 375w, /images/tanker_night_refinery-768.avif 768w, /images/tanker_night_refinery.avif 1376w"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 680px"
+                />
+                <source
+                  type="image/webp"
+                  srcSet="/images/tanker_night_refinery-375.webp 375w, /images/tanker_night_refinery-768.webp 768w, /images/tanker_night_refinery.webp 1376w"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 680px"
+                />
+                <img 
+                  src="/images/tanker_night_refinery.webp" 
+                  alt="Liquid bulk tanker transport - DGW Solutions LLC"
+                  width={1376}
+                  height={768}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </picture>
               <div className="absolute top-4 left-4">
                 <span className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md text-cyan-400 font-mono text-xs font-bold border border-white/20 shadow-md">
                   SPECIALIZED LIQUID BULK TANKER

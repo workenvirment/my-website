@@ -152,15 +152,27 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 {/* Equipment Photo */}
                 <div className="w-full sm:w-36 h-28 rounded-2xl overflow-hidden border border-slate-200 shadow-sm shrink-0 bg-slate-900 relative">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    width={1376}
-                    height={768}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-center filter brightness-95 contrast-105"
-                  />
+                  <picture>
+                    <source
+                      type="image/avif"
+                      srcSet={`${item.image.replace(/\.webp$/, '')}-375.avif 375w, ${item.image.replace(/\.webp$/, '')}-768.avif 768w, ${item.image.replace(/\.webp$/, '')}.avif 1376w`}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                    />
+                    <source
+                      type="image/webp"
+                      srcSet={`${item.image.replace(/\.webp$/, '')}-375.webp 375w, ${item.image.replace(/\.webp$/, '')}-768.webp 768w, ${item.image} 1376w`}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                    />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      width={1376}
+                      height={768}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover object-center filter brightness-95 contrast-105"
+                    />
+                  </picture>
                   <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-slate-950/80 text-[8px] font-mono text-amber-400 font-bold">
                     FLEET PROFILE
                   </div>

@@ -46,15 +46,27 @@ export const LogiXpressHero: React.FC<LogiXpressHeroProps> = ({
       
       {/* Full-Bleed Cinematic Background Image */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={currentHero.bg}
-          alt="DGW Solutions LLC Commercial Semi-Truck at Sunset"
-          width={1376}
-          height={768}
-          fetchPriority="high"
-          decoding="async"
-          className="w-full h-full object-cover object-center transition-all duration-700 scale-105"
-        />
+        <picture>
+          <source
+            type="image/avif"
+            srcSet="/images/hero_truck_sunset-375.avif 375w, /images/hero_truck_sunset-768.avif 768w, /images/hero_truck_sunset.avif 1376w"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px"
+          />
+          <source
+            type="image/webp"
+            srcSet="/images/hero_truck_sunset-375.webp 375w, /images/hero_truck_sunset-768.webp 768w, /images/hero_truck_sunset.webp 1376w"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1376px"
+          />
+          <img
+            src="/images/hero_truck_sunset.webp"
+            alt="DGW Solutions LLC Commercial Semi-Truck at Sunset"
+            width={1376}
+            height={768}
+            fetchPriority="high"
+            decoding="async"
+            className="w-full h-full object-cover object-center transition-all duration-700 scale-105"
+          />
+        </picture>
         {/* Deep Atmospheric Gradients */}
         <div className="absolute inset-0 hero-gradient-overlay" />
         <div className="absolute inset-0 hero-side-gradient" />

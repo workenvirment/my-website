@@ -106,15 +106,27 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
           className="group relative h-80 rounded-3xl overflow-hidden border border-white/10 hover:border-brand-orange/60 transition-all duration-300 shadow-2xl flex flex-col justify-end p-6 cursor-pointer transform hover:-translate-y-1"
         >
           {/* Background Image */}
-          <img
-            src="/images/cargo_warehouse_hub.webp"
-            alt="Logistics warehouse loading dock and freight compliance facility"
-            width={1376}
-            height={768}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
-          />
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="/images/cargo_warehouse_hub-375.avif 375w, /images/cargo_warehouse_hub-768.avif 768w, /images/cargo_warehouse_hub.avif 1376w"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 550px"
+            />
+            <source
+              type="image/webp"
+              srcSet="/images/cargo_warehouse_hub-375.webp 375w, /images/cargo_warehouse_hub-768.webp 768w, /images/cargo_warehouse_hub.webp 1376w"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 550px"
+            />
+            <img
+              src="/images/cargo_warehouse_hub.webp"
+              alt="Logistics warehouse loading dock and freight compliance facility"
+              width={1376}
+              height={768}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+            />
+          </picture>
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-logistics-950 via-logistics-950/75 to-transparent" />
           
@@ -141,15 +153,27 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
           className="group relative h-80 rounded-3xl overflow-hidden border border-white/10 hover:border-brand-orange/60 transition-all duration-300 shadow-2xl flex flex-col justify-end p-6 cursor-pointer transform hover:-translate-y-1"
         >
           {/* Background Image */}
-          <img
-            src="/images/fleet_red_rigs.webp"
-            alt="Commercial semi-truck fleet parked at transportation terminal"
-            width={1376}
-            height={768}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
-          />
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="/images/fleet_red_rigs-375.avif 375w, /images/fleet_red_rigs-768.avif 768w, /images/fleet_red_rigs.avif 1376w"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 550px"
+            />
+            <source
+              type="image/webp"
+              srcSet="/images/fleet_red_rigs-375.webp 375w, /images/fleet_red_rigs-768.webp 768w, /images/fleet_red_rigs.webp 1376w"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 550px"
+            />
+            <img
+              src="/images/fleet_red_rigs.webp"
+              alt="Commercial semi-truck fleet parked at transportation terminal"
+              width={1376}
+              height={768}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
+            />
+          </picture>
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-logistics-950 via-logistics-950/75 to-transparent" />
           

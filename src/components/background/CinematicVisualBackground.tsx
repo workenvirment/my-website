@@ -95,12 +95,18 @@ export const CinematicVisualBackground: React.FC<CinematicVisualBackgroundProps>
     };
 
     const updateParallax = () => {
+      // Skip parallax calculations if page is hidden, reduced motion is requested, or on mobile
+      if (document.hidden || isMobile || isPaused) {
+        animationFrameId = requestAnimationFrame(updateParallax);
+        return;
+      }
+
       const pos = animPosRef.current;
       pos.currentX += (pos.targetX - pos.currentX) * 0.05;
       pos.currentY += (pos.targetY - pos.currentY) * 0.05;
 
       const bgElement = document.getElementById('dgw-parallax-bg-layer');
-      if (bgElement && !isPaused) {
+      if (bgElement) {
         const moveX = pos.currentX * 18;
         const moveY = pos.currentY * 12;
         bgElement.style.transform = `translate3d(${moveX.toFixed(2)}px, ${moveY.toFixed(2)}px, 0) scale(1.05)`;
