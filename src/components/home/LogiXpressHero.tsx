@@ -28,10 +28,10 @@ export const LogiXpressHero: React.FC<LogiXpressHeroProps> = ({
   const [showEstimatedRate, setShowEstimatedRate] = useState(false);
 
   const heroModes = [
-    { id: 'trucking', label: 'Interstate Linehaul', bg: '/images/hero_truck_sunset.jpg', title: 'CROSS COUNTRY COVERAGE WITH RELIABLE TRUCKING', subtitle: 'DGW Solutions LLC connects carriers with suitable loads while managing broker check-calls and rate negotiations behind the scenes.' },
-    { id: 'expedited', label: 'Expedited & Box Truck', bg: '/images/fleet_red_rigs.jpg', title: 'HIGH-PRIORITY EXPEDITED LOGISTICS & DISPATCH', subtitle: 'Rapid nationwide coordination for time-sensitive cargo, straight box trucks, and regional sprinter van freight.' },
+    { id: 'trucking', label: 'Interstate Linehaul', bg: '/images/hero_truck_sunset.webp', title: 'CROSS COUNTRY COVERAGE WITH RELIABLE TRUCKING', subtitle: 'DGW Solutions LLC connects carriers with suitable loads while managing broker check-calls and rate negotiations behind the scenes.' },
+    { id: 'expedited', label: 'Expedited & Box Truck', bg: '/images/fleet_red_rigs.webp', title: 'HIGH-PRIORITY EXPEDITED LOGISTICS & DISPATCH', subtitle: 'Rapid nationwide coordination for time-sensitive cargo, straight box trucks, and regional sprinter van freight.' },
     { id: 'intermodal', label: 'Port & Intermodal', bg: '/images/intermodal_port.jpg', title: 'SEAMLESS INTERMODAL CONTAINER LOGISTICS', subtitle: 'Connecting drayage carriers and power-only tractors with high-velocity port terminal container moves.' },
-    { id: 'heavyhaul', label: 'Heavy Haul & Flatbed', bg: '/images/cargo_warehouse_hub.jpg', title: 'SPECIALIZED OPEN-DECK FREIGHT DISPATCH', subtitle: 'Engineered transport coordination for oversized machinery, flatbeds, stepdecks, and RGN heavy platforms.' },
+    { id: 'heavyhaul', label: 'Heavy Haul & Flatbed', bg: '/images/cargo_warehouse_hub.webp', title: 'SPECIALIZED OPEN-DECK FREIGHT DISPATCH', subtitle: 'Engineered transport coordination for oversized machinery, flatbeds, stepdecks, and RGN heavy platforms.' },
   ];
 
   const currentHero = heroModes.find((m) => m.id === activeMode) || heroModes[0];
@@ -49,6 +49,10 @@ export const LogiXpressHero: React.FC<LogiXpressHeroProps> = ({
         <img
           src={currentHero.bg}
           alt="DGW Solutions LLC Commercial Semi-Truck at Sunset"
+          width={1376}
+          height={768}
+          fetchPriority="high"
+          decoding="async"
           className="w-full h-full object-cover object-center transition-all duration-700 scale-105"
         />
         {/* Deep Atmospheric Gradients */}

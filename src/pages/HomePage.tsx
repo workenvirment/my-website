@@ -138,8 +138,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             {/* Hero Truck Image Frame */}
             <div className="relative w-full rounded-3xl overflow-hidden shadow-2xl bg-white border border-slate-200/80 group z-10">
               <img 
-                src="/images/blue_semi_truck_sunset.jpg" 
+                src="/images/blue_semi_truck_sunset.webp" 
                 alt="DGW Solutions LLC Metallic Royal Blue Commercial Freight Semi-Truck at Sunset"
+                width={1376}
+                height={768}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-auto object-cover object-center group-hover:scale-103 transition-transform duration-700"
               />
               {/* Soft Ambient Blend on Left Edge */}
@@ -387,8 +391,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           {/* Right Column: Real Semi-Truck Photo */}
           <div className="lg:col-span-6 relative min-h-[300px] lg:min-h-full overflow-hidden bg-slate-900">
             <img 
-              src="/images/night_highway_truck.jpg" 
-              alt="Commercial semi-truck on interstate corridor - DGW Solutions LLC" 
+              src="/images/night_highway_truck.webp" 
+              alt="Commercial semi-truck on interstate corridor - DGW Solutions LLC"
+              width={896}
+              height={1200}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover object-center filter brightness-105 contrast-110 hover:scale-105 transition-transform duration-700"
             />
             {/* Soft Ambient Vignette */}
@@ -429,10 +437,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="group rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-lg hover:shadow-2xl transition-all flex flex-col">
             <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-slate-950">
               <img 
-                src="/images/fleet_sunset_row.jpg" 
-                alt="Commercial semi-truck fleet parked in a row - DGW Solutions LLC" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="/images/fleet_sunset_row.webp" 
+                alt="Commercial semi-truck fleet parked in a row - DGW Solutions LLC"
+                width={1376}
+                height={768}
                 loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute top-4 left-4">
                 <span className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md text-amber-400 font-mono text-xs font-bold border border-white/20 shadow-md">
@@ -474,10 +485,13 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <div className="group rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-lg hover:shadow-2xl transition-all flex flex-col">
             <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-slate-950">
               <img 
-                src="/images/tanker_night_refinery.jpg" 
-                alt="Liquid bulk tanker transport - DGW Solutions LLC" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                src="/images/tanker_night_refinery.webp" 
+                alt="Liquid bulk tanker transport - DGW Solutions LLC"
+                width={1376}
+                height={768}
                 loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute top-4 left-4">
                 <span className="px-3 py-1.5 rounded-xl bg-slate-950/85 backdrop-blur-md text-cyan-400 font-mono text-xs font-bold border border-white/20 shadow-md">
@@ -593,9 +607,12 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
               <div className="relative h-44 w-full overflow-hidden bg-slate-900">
                 <img 
                   src={eq.image} 
-                  alt={eq.name} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  alt={eq.name}
+                  width={1376}
+                  height={768}
                   loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute top-2 left-2">
                   <span className="px-2.5 py-1 rounded-lg bg-slate-950/80 backdrop-blur-xs text-[10px] font-mono text-amber-400 font-bold border border-white/10">

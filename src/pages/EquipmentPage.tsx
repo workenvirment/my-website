@@ -19,7 +19,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$5,500 – $8,500 / week (Est.)',
       rpm: '$2.30 – $3.10 / mile',
       weight: 'Up to 45,000 lbs',
-      image: '/images/dryvan_trailer.jpg',
+      image: '/images/dryvan_trailer.webp',
       dims: '53’ Length × 102” Width × 110” Interior Height (26–30 Standard Pallets)',
       desc: 'Standard enclosed freight transportation for general retail merchandise, packaged goods, paper, plastics, and dry cargo.',
       gear: ['E-Track Straps (2–4 minimum)', 'Load Lock Bars (2–4)', 'Rubber Pallet Friction Mats'],
@@ -31,7 +31,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$6,500 – $10,000 / week (Est.)',
       rpm: '$2.60 – $3.80 / mile',
       weight: 'Up to 44,000 lbs',
-      image: '/images/reefer_trailer.jpg',
+      image: '/images/reefer_trailer.webp',
       dims: '53’ Length × 102” Width (Temperature Range: -20°F to +70°F)',
       desc: 'Temperature-controlled freight support with continuous temperature monitoring for fresh produce, frozen foods, meat, dairy, and pharmaceuticals.',
       gear: ['Pre-Cooling Protocol Knowledge', 'Pulp Thermometer', 'Clean Washout Receipts'],
@@ -43,7 +43,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$6,000 – $9,500 / week (Est.)',
       rpm: '$2.70 – $3.90 / mile',
       weight: 'Up to 48,000 lbs',
-      image: '/images/flatbed_trailer.jpg',
+      image: '/images/flatbed_trailer.webp',
       dims: '48’ to 53’ Deck Length × 102” Width (Standard 5’ Deck Height)',
       desc: 'Open deck freight loaded by cranes or forklifts. Suitable for building materials, steel coils, lumber, pipe, precast concrete, and heavy machinery.',
       gear: ['4” Winch Straps (8–12)', 'Grade 70 Transport Chains & Binders', '8ft Lumber / Steel Tarps', 'Corner Edge Protectors'],
@@ -55,7 +55,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$6,500 – $10,500 / week (Est.)',
       rpm: '$2.80 – $4.10 / mile',
       weight: 'Up to 46,000 lbs',
-      image: '/images/stepdeck_excavator.jpg',
+      image: '/images/stepdeck_excavator.webp',
       dims: '10’ Upper Deck + 38’ to 43’ Lower Well (Lower Deck Height: 36” to 40”)',
       desc: 'Specialized low-profile deck designed for taller machinery, tractors, industrial equipment, and modular freight exceeding standard flatbed heights.',
       gear: ['Heavy-Duty Chains & Ratchet Binders', 'Ramps (optional for roll-on/off)', 'Custom Stepdeck Tarps'],
@@ -67,7 +67,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$3,500 – $6,500 / week (Est.)',
       rpm: '$2.00 – $2.80 / mile',
       weight: 'Up to 10,000 lbs (Non-CDL: 6,000–8,500 lbs)',
-      image: '/images/boxtruck_delivery.jpg',
+      image: '/images/boxtruck_delivery.webp',
       dims: '26’ Box Length × 102” Width × 96”–102” Height (12 Standard Pallets)',
       desc: 'Suitable for regional distribution, commercial business-to-business freight, residential liftgate deliveries, and final-mile distribution.',
       gear: ['Hydraulic Tuck-Under Liftgate', 'Pallet Jack', 'E-Track Ratchet Straps (4)', 'Moving Blankets'],
@@ -79,7 +79,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$4,500 – $7,500 / week (Est.)',
       rpm: '$2.20 – $3.20 / mile',
       weight: 'Up to 16,500 lbs Payload (Class 4/5 Dually Pickup + 40ft Trailer)',
-      image: '/images/hotshot_rig.jpg',
+      image: '/images/hotshot_rig.webp',
       dims: '40’ Deck (Typically 35’ Flat + 5’ Dovetail with Spring Assist Ramps)',
       desc: 'Agile open deck transport suitable for oilfield pipe, building materials, agricultural implements, and time-critical commercial loads.',
       gear: ['Mega Ramps', 'Winch Straps (6–8)', 'Chains & Lever Binders', 'Hotshot Tarps'],
@@ -91,7 +91,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$4,000 – $7,000 / week (Est.)',
       rpm: '$2.10 – $3.00 / mile',
       weight: 'Tractor with 5th Wheel & Sliding Hitch',
-      image: '/images/fleet_sunset_row.jpg',
+      image: '/images/fleet_sunset_row.webp',
       dims: 'Pulling Shipper-Owned / Broker-Owned 53ft Trailers, Intermodal, or Relays',
       desc: 'Tractor-only dispatch matching commercial tractors with pre-loaded shipper trailers, fleet relocations, and intermodal relay freight.',
       gear: ['Valid Interchange Agreement Knowledge', 'Clean 5th Wheel Plate', 'Gladhand Couplers & Air Lines'],
@@ -103,7 +103,7 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
       gross: '$7,500 – $14,000 / week (Est.)',
       rpm: '$3.20 – $4.50 / mile',
       weight: 'Up to 50,000 lbs (Liquid / Permitted Bulk)',
-      image: '/images/tanker_night_refinery.jpg',
+      image: '/images/tanker_night_refinery.webp',
       dims: 'Dual Stainless Steel Tankers & Multi-Axle Lowboy Rigs',
       desc: 'Tanker and heavy haul coordination for industrial refineries, chemical freight, liquid food grade, and specialized permitted cargo.',
       gear: ['Tanker Endorsement & HME', 'Vapor Recovery Lines', 'Safety Spill Kits & PPE'],
@@ -155,8 +155,11 @@ export const EquipmentPage: React.FC<EquipmentPageProps> = ({ onNavigate }) => {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover object-center filter brightness-95 contrast-105"
+                    width={1376}
+                    height={768}
                     loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover object-center filter brightness-95 contrast-105"
                   />
                   <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-slate-950/80 text-[8px] font-mono text-amber-400 font-bold">
                     FLEET PROFILE

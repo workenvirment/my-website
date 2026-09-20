@@ -61,8 +61,12 @@ export const InteractiveUsMap: React.FC = () => {
           {/* Real Satellite Map Backdrop */}
           <div className="absolute inset-0 z-0">
             <img 
-              src="/images/us_satellite_map.jpg" 
+              src="/images/us_satellite_map.webp" 
               alt="US Real Satellite Freight Radar Map" 
+              width={1376}
+              height={768}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover object-center filter brightness-95 contrast-125 opacity-70"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-slate-950/80" />

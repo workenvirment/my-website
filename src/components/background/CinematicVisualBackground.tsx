@@ -21,7 +21,7 @@ const TRUCK_PHOTO_GALLERY: PhotoSlide[] = [
   {
     id: 'fleet-sunset-row',
     name: 'Commercial Freight Fleet Yard at Dusk',
-    imageUrl: '/images/fleet_sunset_row.jpg',
+    imageUrl: '/images/fleet_sunset_row.webp',
     altText: 'Class 8 semi-truck fleet staged in a neat row at trucking terminal at golden hour sunset',
     accentColor: '#F59E0B',
     location: 'Commercial Fleet Operations Network'
@@ -29,7 +29,7 @@ const TRUCK_PHOTO_GALLERY: PhotoSlide[] = [
   {
     id: 'night-highway-truck',
     name: 'Night Highway Transcontinental Logistics',
-    imageUrl: '/images/night_highway_truck.jpg',
+    imageUrl: '/images/night_highway_truck.webp',
     altText: 'Modern Class 8 semi-truck sleeper rig driving on open mountain highway under starry night sky',
     accentColor: '#38BDF8',
     location: 'I-70 Transcontinental Corridor • Continuous Operations'
@@ -37,7 +37,7 @@ const TRUCK_PHOTO_GALLERY: PhotoSlide[] = [
   {
     id: 'tanker-refinery',
     name: 'Refinery Bulk Liquid Hazmat Corridor',
-    imageUrl: '/images/tanker_night_refinery.jpg',
+    imageUrl: '/images/tanker_night_refinery.webp',
     altText: 'Dual stainless steel liquid bulk tanker rig at commercial refinery terminal',
     accentColor: '#06B6D4',
     location: 'Specialized Industrial Bulk Liquid Hauling'
@@ -45,7 +45,7 @@ const TRUCK_PHOTO_GALLERY: PhotoSlide[] = [
   {
     id: 'distribution-hub',
     name: 'Distribution Fulfillment Hub & Staged Freight',
-    imageUrl: '/images/cargo_warehouse_hub.jpg',
+    imageUrl: '/images/cargo_warehouse_hub.webp',
     altText: 'Modern commercial distribution logistics center with staged freight',
     accentColor: '#10B981',
     location: 'Commercial Distribution Hub Network'

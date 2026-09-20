@@ -28,7 +28,7 @@ export const EQUIPMENT_LIST: EquipmentSpec[] = [
     cdlGuidance: 'Generally associated with CDL Class A combination vehicle licensing.',
     cdlClass: 'Class A',
     imagePlaceholder: 'semi-dry-van',
-    imageUrl: '/images/dryvan_trailer.jpg',
+    imageUrl: '/images/dryvan_trailer.webp',
   },
   {
     id: 'reefer',
@@ -57,7 +57,7 @@ export const EQUIPMENT_LIST: EquipmentSpec[] = [
     cdlGuidance: 'Generally associated with CDL Class A combination vehicle licensing.',
     cdlClass: 'Class A',
     imagePlaceholder: 'semi-reefer',
-    imageUrl: '/images/reefer_trailer.jpg',
+    imageUrl: '/images/reefer_trailer.webp',
   },
   {
     id: 'flatbed',
@@ -86,7 +86,7 @@ export const EQUIPMENT_LIST: EquipmentSpec[] = [
     cdlGuidance: 'Generally associated with CDL Class A combination vehicle licensing.',
     cdlClass: 'Class A',
     imagePlaceholder: 'semi-flatbed',
-    imageUrl: '/images/flatbed_trailer.jpg',
+    imageUrl: '/images/flatbed_trailer.webp',
   },
   {
     id: 'hotshot',
@@ -114,7 +114,7 @@ export const EQUIPMENT_LIST: EquipmentSpec[] = [
     cdlGuidance: 'Typically Class A CDL when combined Gross Vehicle Weight Rating (GVWR) exceeds 26,000 lbs with trailer > 10,000 lbs. (Verify specific vehicle & state regulations).',
     cdlClass: 'Class A',
     imagePlaceholder: 'hotshot-rig',
-    imageUrl: '/images/hotshot_rig.jpg',
+    imageUrl: '/images/hotshot_rig.webp',
   },
   {
     id: 'box-truck',
@@ -143,7 +143,7 @@ export const EQUIPMENT_LIST: EquipmentSpec[] = [
     cdlGuidance: 'Vehicles under 26,000 lbs GVWR are generally operated with non-CDL or Class B CDL depending on specific weight classifications and air brake configurations.',
     cdlClass: 'Class B',
     imagePlaceholder: 'box-truck',
-    imageUrl: '/images/boxtruck_delivery.jpg',
+    imageUrl: '/images/boxtruck_delivery.webp',
     subVariations: [
       {
         size: '10 – 16 FT Box Truck',
@@ -256,7 +256,7 @@ export const EQUIPMENT_LIST: EquipmentSpec[] = [
     cdlGuidance: 'CDL Class A combination license required.',
     cdlClass: 'Class A',
     imagePlaceholder: 'stepdeck-trailer',
-    imageUrl: '/images/stepdeck_excavator.jpg',
+    imageUrl: '/images/stepdeck_excavator.webp',
   },
   {
     id: 'rgn',
@@ -284,6 +284,6 @@ export const EQUIPMENT_LIST: EquipmentSpec[] = [
     cdlGuidance: 'CDL Class A with heavy-haul / tanker endorsements and state permitting knowledge.',
     cdlClass: 'Class A Specialized',
     imagePlaceholder: 'rgn-heavy-haul',
-    imageUrl: '/images/tanker_night_refinery.jpg',
+    imageUrl: '/images/tanker_night_refinery.webp',
   }
 ];

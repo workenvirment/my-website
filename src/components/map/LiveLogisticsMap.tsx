@@ -185,8 +185,12 @@ export const LiveLogisticsMap: React.FC<LiveLogisticsMapProps> = ({
           {/* Real Satellite Map Image Base Layer */}
           <div className="absolute inset-0 z-0">
             <img 
-              src="/images/us_satellite_map.jpg" 
+              src="/images/us_satellite_map.webp" 
               alt="High-resolution satellite terrain map of United States freight network" 
+              width={1376}
+              height={768}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover object-center filter brightness-110 contrast-115"
             />
             {/* Subtle High-Tech Vignette & Radar Grid Overlay */}

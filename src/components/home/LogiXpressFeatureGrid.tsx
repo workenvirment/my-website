@@ -107,8 +107,12 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
         >
           {/* Background Image */}
           <img
-            src="/images/cargo_warehouse_hub.jpg"
+            src="/images/cargo_warehouse_hub.webp"
             alt="Logistics warehouse loading dock and freight compliance facility"
+            width={1376}
+            height={768}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
           />
           {/* Gradient Overlay */}
@@ -138,8 +142,12 @@ export const LogiXpressFeatureGrid: React.FC<LogiXpressFeatureGridProps> = ({ on
         >
           {/* Background Image */}
           <img
-            src="/images/fleet_red_rigs.jpg"
+            src="/images/fleet_red_rigs.webp"
             alt="Commercial semi-truck fleet parked at transportation terminal"
+            width={1376}
+            height={768}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700"
           />
           {/* Gradient Overlay */}
