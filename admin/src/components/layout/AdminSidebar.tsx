@@ -327,9 +327,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
           <div className="relative z-10 space-y-1.5">
             <div className="flex items-center gap-2">
-              <div className="p-0.5 rounded bg-white border border-white/20 shrink-0">
-                <DgwTruckLogo className="h-4 w-auto" />
-              </div>
+              <DgwTruckLogo className="h-5 w-auto shrink-0" />
               <div className="min-w-0">
                 <p className="text-[11px] font-bold text-white leading-tight truncate">DGW Solutions LLC</p>
                 <p className="text-[8px] text-slate-400 font-mono truncate">Connecting Opportunities</p>

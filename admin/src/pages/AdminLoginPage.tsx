@@ -48,13 +48,13 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess }
         
         {/* Brand Header */}
         <div className="text-center space-y-2.5">
-          <div className="inline-flex items-center justify-center p-2.5 rounded-2xl bg-white border border-white/30 shadow-xl shadow-blue-950/40 mx-auto">
+          <div className="flex items-center justify-center mx-auto">
             <img
               src="/dgw-logo.png"
               alt="DGW Solutions LLC"
               width={1024}
               height={512}
-              className="h-12 sm:h-14 w-auto object-contain"
+              className="h-16 sm:h-20 w-auto object-contain drop-shadow-[0_4px_20px_rgba(37,99,235,0.3)]"
             />
           </div>
 
