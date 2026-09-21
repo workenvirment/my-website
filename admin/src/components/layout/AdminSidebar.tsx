@@ -181,22 +181,15 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         {/* Top Branding Section */}
         <div className="h-[56px] px-3.5 border-b border-[#1B293E] flex items-center shrink-0 bg-[#08101C]">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-blue-600/15 border border-blue-500/30 flex items-center justify-center shrink-0 shadow-inner">
-              <DgwTruckLogo className="w-5 h-5" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-1 leading-none">
-                <span className="font-display font-black text-white text-[14px] tracking-tight truncate">
-                  DGW
-                </span>
-                <span className="text-[11.5px] font-bold text-slate-300 truncate">
-                  Solutions
-                </span>
-              </div>
-              <p className="text-[8px] text-blue-400 font-mono tracking-wider uppercase font-semibold truncate mt-1">
-                Operations Portal
-              </p>
-            </div>
+            <img
+              src="/dgw-logo.png"
+              alt="DGW Solutions LLC"
+              width={1024}
+              height={512}
+              className="h-9 w-auto object-contain shrink-0"
+              loading="eager"
+              decoding="async"
+            />
           </div>
         </div>
 
