@@ -12,7 +12,6 @@ import {
   EyeOff,
   X
 } from 'lucide-react';
-import { DgwTruckLogo } from '../components/common/DgwTruckLogo';
 
 interface AdminLoginPageProps {
   onLoginSuccess: () => void;
@@ -49,8 +48,14 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess }
         
         {/* Brand Header */}
         <div className="text-center space-y-2.5">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0A1322] border border-blue-500/30 shadow-xl shadow-blue-950 p-2 mx-auto">
-            <DgwTruckLogo className="w-12 h-12" />
+          <div className="inline-flex items-center justify-center p-2.5 rounded-2xl bg-white border border-white/30 shadow-xl shadow-blue-950/40 mx-auto">
+            <img
+              src="/dgw-logo.png"
+              alt="DGW Solutions LLC"
+              width={1024}
+              height={512}
+              className="h-12 sm:h-14 w-auto object-contain"
+            />
           </div>
 
           <div>

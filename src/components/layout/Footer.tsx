@@ -3,7 +3,6 @@ import {
   ShieldCheck, 
   Phone, 
   Mail,
-  Truck,
   Clock
 } from 'lucide-react';
 
@@ -21,19 +20,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           
           {/* Col 1: Brand & Corporate Verification */}
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-amber-500 flex items-center justify-center text-slate-950 font-black shrink-0 shadow-md">
-                <Truck className="w-5 h-5" />
-              </div>
-
-              <div>
-                <span className="font-display font-black text-xl text-white tracking-tight">
-                  DGW<span className="text-amber-400">SOLUTIONS</span> LLC
-                </span>
-                <span className="font-mono text-[9px] text-slate-400 block tracking-wider">
-                  DISPATCHING GLOBAL WORLD
-                </span>
-              </div>
+            <div className="inline-block p-2 rounded-2xl bg-white border border-white/20 shadow-md">
+              <img
+                src="/images/dgw-logo.png"
+                alt="DGW Solutions LLC"
+                width={1024}
+                height={512}
+                className="h-12 sm:h-14 w-auto object-contain"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
 
             <p className="text-slate-400 leading-relaxed text-xs">

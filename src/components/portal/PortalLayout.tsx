@@ -76,21 +76,26 @@ export const PortalLayout: React.FC<PortalLayoutProps> = ({
         {/* Sidebar Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3 overflow-hidden">
-            {/* Logo Emblem */}
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-orange to-amber-500 flex items-center justify-center text-white shrink-0 shadow-glow-orange">
-              <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current text-white transform -rotate-45 translate-x-0.5">
-                <path d="M12 2L2 22l10-4 10 4L12 2z" />
-              </svg>
-            </div>
-
-            {!sidebarCollapsed && (
-              <div className="flex flex-col truncate animate-in fade-in duration-200">
-                <span className="font-display font-black text-sm tracking-tight text-white leading-tight">
-                  DGW<span className="text-brand-orange">SOLUTIONS</span>
-                </span>
-                <span className="font-mono text-[9px] text-slate-400 uppercase tracking-wider">
-                  DISPATCH COMMAND
-                </span>
+            {/* Official DGW Logo */}
+            {!sidebarCollapsed ? (
+              <div className="p-1 rounded-xl bg-white border border-white/20 shadow-sm">
+                <img
+                  src="/images/dgw-logo.png"
+                  alt="DGW Solutions LLC"
+                  width={1024}
+                  height={512}
+                  className="h-8 w-auto object-contain"
+                />
+              </div>
+            ) : (
+              <div className="w-10 h-10 rounded-xl bg-white border border-white/20 flex items-center justify-center shadow-sm p-1">
+                <img
+                  src="/images/dgw-logo.png"
+                  alt="DGW Solutions LLC"
+                  width={1024}
+                  height={512}
+                  className="w-full h-full object-contain"
+                />
               </div>
             )}
           </div>
