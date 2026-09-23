@@ -26,7 +26,7 @@ export const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({
     );
   }
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated || !user || !user.isAdminAuthorized) {
     return (
       <div className="min-h-screen bg-[#07111F] flex flex-col items-center justify-center p-6 text-white text-center">
         <div className="max-w-md w-full p-8 rounded-2xl bg-[#0D1624] border border-[#1E2C3F] space-y-6 shadow-2xl">
@@ -35,9 +35,9 @@ export const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-bold font-display text-white tracking-tight">Authentication Required</h2>
+            <h2 className="text-xl font-bold font-display text-white tracking-tight">Authorization Required</h2>
             <p className="text-xs text-slate-400 leading-relaxed">
-              You must be signed in with an authorized DGW administrator account to access this management dashboard.
+              This account is not authorized to access the DGW Admin Portal. Only authorized administrator accounts with active admin claims are permitted.
             </p>
           </div>
 
